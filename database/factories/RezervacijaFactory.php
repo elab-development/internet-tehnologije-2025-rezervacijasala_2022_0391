@@ -25,7 +25,7 @@ class RezervacijaFactory extends Factory
             'idKorisnika' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'idSale' => Sala::inRandomOrder()->first()?->id ?? Sala::factory(),
             'idTipDogadjaja' => TipDogadjaja::inRandomOrder()->first()?->id ?? TipDogadjaja::factory(),
-            'naziv' => fake()->unique()->company(),
+            
             'pocetak' => fake()->dateTimeBetween('-2 months', '+1 month'),
             'kraj' => fake()->dateTimeBetween('+1 month', '+2 months'),
             'status' => fake()->randomElement(['otkazana', 'u_toku', 'zavrsena', 'potvrdjena', 'na_cekanju']),
