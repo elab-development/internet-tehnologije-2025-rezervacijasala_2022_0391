@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         User::factory(10)->create();
+         User::factory(15)->create();
          TipDogadjaja::factory(9)->create();
          Karakteristika::factory(10)->create();
          Sala::factory(10)->create();
