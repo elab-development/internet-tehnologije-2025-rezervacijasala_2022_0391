@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('idTipDogadjaja')->constrained('tipovidogadjaja')->cascadeOnDelete();
             $table->dateTime('pocetak');
             $table->dateTime('kraj');
-            $table->enum('statuss', ['otkazana', 'u_toku', 'zavrsena', 'potvrdjena', 'na_cekanju'])
+            $table->enum('status', ['otkazana', 'u_toku', 'zavrsena', 'potvrdjena', 'na_cekanju'])
             ->default('na_cekanju'); //+ na_cekanju? ili bez toga ako se automatski prihvata ako je sala slobodna
 
             $table->timestamps();
