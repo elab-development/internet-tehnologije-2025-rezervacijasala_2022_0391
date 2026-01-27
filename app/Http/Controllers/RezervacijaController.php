@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rezervacija;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RezervacijaController extends Controller
 {
@@ -12,7 +13,8 @@ class RezervacijaController extends Controller
      */
     public function index()
     {
-        //
+        //  with()  povlaci i podatke o sali i korisniku, ne samo id
+        return response()->json(Rezervacija::with(['korisnik', 'sala', 'tipDogadjaja'])->get());
     }
 
     /**
@@ -28,16 +30,39 @@ class RezervacijaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'idKorisnika' => 'required|exists:users,id',
+            'idSale' => 'required|exists:sale,id',
+            'idTipDogadjaja' => 'required|exists:tipovidogadjaja,id',
+            'pocetak' => 'required|date|after:now',
+            'kraj' => 'required|date|after:pocetak',
+            'status' => 'string' // npr. 'rezervisano', 'otkazano'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $rezervacija = Rezervacija::create($request->all());
+
+        return response()->json([
+            'message' => 'Rezervacija je uspešno kreirana!',
+            'podaci' => $rezervacija
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Rezervacija $rezervacija)
+    public function show($id)
     {
-        //
+        $rezervacija = Rezervacija::with(['korisnik', 'sala', 'tipDogadjaja'])->find($id);
+        if (!$rezervacija) {
+            return response()->json(['message' => 'Rezervacija nije pronađena'], 404);
+        }
+        return response()->json($rezervacija);
     }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -50,16 +75,46 @@ class RezervacijaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Rezervacija $rezervacija)
+    public function update(Request $request, $id)
     {
-        //
+       try {
+        /** @var Rezervacija $rezervacija */
+        $rezervacija = Rezervacija::find($id);
+
+        if (!$rezervacija) {
+            return response()->json(['message' => 'Nema je u bazi!'], 404);
+        }
+
+        // Koristimo update, ali hvatamo grešku ako baza odbije
+        $rezervacija->update($request->all());
+
+        return response()->json([
+            'message' => 'Uspešno izmenjeno!',
+            'podaci' => $rezervacija
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'poruka' => 'Baza odbija izmenu za ID ' . $id,
+            'greska_detalji' => $e->getMessage() // Ovde će pisati šta ne valja
+        ], 500);
     }
+    }
+    
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rezervacija $rezervacija)
-    {
-        //
+    public function destroy($id)
+    {/** @var Rezervacija $rezervacija */
+        $rezervacija = Rezervacija::find($id);
+
+    if (!$rezervacija) {
+        return response()->json(['message' => 'Rezervacija nije pronađena'], 404);
+    }
+
+    $rezervacija->delete();
+
+    return response()->json(['message' => 'Rezervacija je uspešno otkazana/obrisana']);
     }
 }

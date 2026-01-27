@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Sala;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SalaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    //prikaz svih sala
     public function index()
     {
-        //
+        $sale = Sala::all();
+        return response()->json($sale);
     }
 
     /**
@@ -26,17 +29,48 @@ class SalaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    //dodavanje nove sale
     public function store(Request $request)
-    {
-        //
+    {//$validator = Validator::make($request->all()
+        $validator = Validator::make($request->all(), [
+            'naziv' => 'required|string|max:255',
+            'kapacitet' => 'required|integer|min:1',
+            'opis' => 'required|string',
+            'lokacija' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $sala = Sala::create($validator->validated());
+
+        return response()->json([
+            'message' => 'Sala je uspešno kreirana!',
+            'sala' => $sala
+        ], 201);
     }
+    
 
     /**
      * Display the specified resource.
      */
-    public function show(Sala $sala)
-    {
-        //
+    public function show($id)
+    {/*
+        $sala = Sala::with(['karakteristike', 'dozvoljeniTipoviDogadjaja'])->find($id);
+
+    if (!$sala) {
+        return response()->json(['message' => 'Sala nije pronađena'], 404);
+    }
+
+    return response()->json($sala);*/
+    $sala = Sala::find($id);
+
+    if (!$sala) {
+        return response()->json(['message' => 'Sala nije pronadjena'], 404);
+    }
+
+    return response()->json($sala, 200);
     }
 
     /**
@@ -58,8 +92,18 @@ class SalaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Sala $sala)
-    {
-        //
+    public function destroy($id)
+    {/** @var Sala $sala */
+    $sala = Sala::find($id);
+
+    
+    if (!$sala) {
+        return response()->json(['message' => 'Sala nije pronađena u bazi'], 404);
+    }
+    $sala->delete();
+   
+    return response()->json([
+        'message' => 'Sala je uspešno obrisana!'
+    ], 200);
     }
 }
