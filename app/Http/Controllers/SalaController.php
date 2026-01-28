@@ -35,7 +35,7 @@ class SalaController extends Controller
         $validator = Validator::make($request->all(), [
             'naziv' => 'required|string|max:255',
             'kapacitet' => 'required|integer|min:1',
-            'opis' => 'required|string',
+            'opis' => 'nullable|string',
             'lokacija' => 'required|string|max:255',
         ]);
 

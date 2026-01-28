@@ -36,7 +36,7 @@ class RezervacijaController extends Controller
             'idTipDogadjaja' => 'required|exists:tipovidogadjaja,id',
             'pocetak' => 'required|date|after:now',
             'kraj' => 'required|date|after:pocetak',
-            'status' => 'string' // npr. 'rezervisano', 'otkazano'
+            'status' => 'required|string|in:otkazana, u_toku, zavrsena, potvrdjena, na_cekanju' // npr. 'rezervisano', 'otkazano'
         ]);
 
         if ($validator->fails()) {

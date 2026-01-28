@@ -91,6 +91,7 @@ class UserController extends Controller
         'email' => 'sometimes|string|email|max:255|unique:users,email,'. $user_id,
         'password' => 'sometimes|string|min:8',
         'uloga' => 'sometimes|in:administrator,ulogovan,neulogovan', // tvoje uloge,enum
+	    'banovan' => 'required|boolean'
     ]);
 
         if($validator->fails()){
@@ -116,6 +117,7 @@ class UserController extends Controller
         if(!$user){
             return response()->json(['message'=>'User nije pronadjen'],404);
 
+            //NE VRACA GRESKU user nije pronadjen?
         }
            $user->delete();
            return response()->json(['message'=>'User je obrisan'],200);
