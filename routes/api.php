@@ -29,6 +29,7 @@ Route::get('/karakteristike', [KarakteristikaController::class, 'index']);
 Route::get('/rezervacije', [RezervacijaController::class, 'index']);
 Route::get('/rezervacije/{id}', [RezervacijaController::class, 'show']);
 
+Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 
 //moraju da imaju token
 
