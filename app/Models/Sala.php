@@ -26,7 +26,7 @@ class Sala extends Model
 
     public function karakteristike()
     {
-        return $this->belongsToMany(Karakteristika::class, 'sala_karakteristika', 'idSale', 'idKarakteristika');
+        return $this->belongsToMany(Karakteristika::class, 'karakteristika_sala', 'idSale', 'idKarakteristika');
         //sala_karakteristika je ime tabele u bazi(znaci nazovi ovako ili promeni ovde nzaiv)
     }
 
