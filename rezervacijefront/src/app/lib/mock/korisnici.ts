@@ -6,7 +6,7 @@ export const mock_korisnici: User[] = [
         ime: "Anja",
         prezime: "Antić",
         korisnickoIme: "anja_admin",
-        uloga: "admin",
+        uloga: "administrator",
         banovan: false
     },
     {
@@ -14,15 +14,15 @@ export const mock_korisnici: User[] = [
         ime: "Marko",
         prezime: "Marković",
         korisnickoIme: "marko99",
-        uloga: "student",
+        uloga: "ulogovan",
         banovan: false
     },
     {
         idKorisnika: 3,
         ime: "Jelena",
         prezime: "Jovanović",
-        korisnickoIme: "jelena_prof",
-        uloga: "profesor",
+        korisnickoIme: "jelena_jov",
+        uloga: "ulogovan",
         banovan: false
     },
     {
@@ -30,7 +30,7 @@ export const mock_korisnici: User[] = [
         ime: "Stefan",
         prezime: "Stanković",
         korisnickoIme: "stefan_s",
-        uloga: "student",
+        uloga: "ulogovan",
         banovan: true
     },
     {
@@ -38,7 +38,7 @@ export const mock_korisnici: User[] = [
         ime: "Milica",
         prezime: "Milić",
         korisnickoIme: "milica_m",
-        uloga: "student",
+        uloga: "administrator",
         banovan: false
     },
     {
@@ -46,7 +46,7 @@ export const mock_korisnici: User[] = [
         ime: "Nikola",
         prezime: "Nikolić",
         korisnickoIme: "nikola_n",
-        uloga: "profesor",
+        uloga: "ulogovan",
         banovan: false
     },
     {
@@ -54,15 +54,15 @@ export const mock_korisnici: User[] = [
         ime: "Sara",
         prezime: "Sarić",
         korisnickoIme: "sara_s",
-        uloga: "student",
-        banovan: false
+        uloga: "ulogovan",
+        banovan: true
     },
     {
         idKorisnika: 8,
         ime: "Pavle",
         prezime: "Pavlović",
         korisnickoIme: "paja_p",
-        uloga: "student",
+        uloga: "ulogovan",
         banovan: false
     },
     {
@@ -70,7 +70,7 @@ export const mock_korisnici: User[] = [
         ime: "Maja",
         prezime: "Majkić",
         korisnickoIme: "maja_m",
-        uloga: "admin",
+        uloga: "administrator",
         banovan: false
     },
     {
@@ -78,7 +78,7 @@ export const mock_korisnici: User[] = [
         ime: "Igor",
         prezime: "Ignić",
         korisnickoIme: "igor_i",
-        uloga: "student",
-        banovan: false
+        uloga: "ulogovan",
+        banovan: true
     }
 ];

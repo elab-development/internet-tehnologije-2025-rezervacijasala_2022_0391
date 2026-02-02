@@ -49,10 +49,10 @@ export const mock_sale: Sala[] = [
     },
     {
         idSale: 4,
-        naziv: "Amfiteatar 1",
+        naziv: "Amfiteatar",
         kapacitet: 300,
         lokacija: "Zgrada B, Prizemlje",
-        opis: "Najveći amfiteatar na fakultetu, idealan za masovna predavanja i svečane akademije.",
+        opis: "Idealan za masovna predavanja, seminare i svečane akademije.",
         karakteristike: [
             { idKarakteristika: 2, naziv: "Projektor" },
             { idKarakteristika: 1, naziv: "Klima uređaj" },
