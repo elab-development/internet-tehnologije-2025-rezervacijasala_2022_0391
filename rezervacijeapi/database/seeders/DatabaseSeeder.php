@@ -35,9 +35,15 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
          ]);
          User::factory(15)->create();
-         TipDogadjaja::factory(9)->create();
-         Karakteristika::factory(10)->create();
-         Sala::factory(10)->create();
+         $sviTipovi=TipDogadjaja::factory(9)->create();
+         $sveKarakteristike =Karakteristika::factory(11)->create();
+         Sala::factory(10)->create()->each(function ($sala) use ($sviTipovi, $sveKarakteristike) {
+            // Svakoj sali dodeli 2 nasumična tipa događaja iz kolekcije koju smo gore napravili
+            $sala->tipoviDogadjaja()->attach($sviTipovi->random(2));
+            
+            // Svakoj sali dodeli 3 nasumične karakteristike
+            $sala->karakteristike()->attach($sveKarakteristike->random(3));
+        });
          Rezervacija::factory(20)->create();
 
         

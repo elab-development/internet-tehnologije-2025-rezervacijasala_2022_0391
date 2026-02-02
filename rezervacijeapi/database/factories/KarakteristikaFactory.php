@@ -26,7 +26,8 @@ class KarakteristikaFactory extends Factory
             'Flipchart',
             'Televizor 4K',
             'Aparat za kafu',
-            'Ergonomske stolice'
+            'Ergonomske stolice',
+            'Računari'
         ];
         return [
             'naziv'=> fake()->unique()->randomElement($nizkarakteristika),
