@@ -26,6 +26,7 @@ export type Sala = {
     kapacitet: number;
     opis: string;
     lokacija: string;
+    slike:string[]; // ovde ce da budu putanje do slika
     // Ako uz salu šalješ i njene karakteristike ili tipove:
     karakteristike?: Karakteristika[];
     tipoviDogadjaja?: TipDogadjaja[];

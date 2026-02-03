@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Ovo nam treba za prebacivanje stranica
+import { mock_korisnici } from "@/app/lib/mock/korisnici";
 
 export default function LoginStranica() {
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Za poruku ako pogrešiš podatke
   
@@ -14,15 +16,39 @@ export default function LoginStranica() {
     e.preventDefault();
     setError(""); // Resetuj grešku na početku
 
-    // PROVERA: Da li je korisnik administrator?
-    if (email === "admin@primer.com" && password === "admin123") {
-      // Ako je tačno, prebaci ga na glavnu stranicu sa rezervacijama
-      router.push("/");
+  //   // PROVERA: Da li je korisnik administrator?
+  //   if (email === "admin@primer.com" && password === "admin123") {
+  //     // Ako je tačno, prebaci ga na glavnu stranicu sa rezervacijama
+  //     router.push("/");
+  //   } else {
+  //     // Ako nije tačno, izbaci crvenu poruku
+  //     setError("Pogrešan email ili lozinka. Samo administrator ima pristup.");
+  //   }
+  // };
+
+  const korisnik = mock_korisnici.find(k => k.korisnickoIme === username);
+
+    if (korisnik) {
+      if (korisnik.banovan) {
+        setError("Vaš nalog je banovan.");
+        return;
+      }
+
+      // Čuvamo podatke u memoriji browsera da bi ostale stranice znale ko smo
+      localStorage.setItem("ulogovan_korisnik", JSON.stringify(korisnik));
+
+      // PREUSMERAVANJE NA OSNOVU ULOGE
+      if (korisnik.uloga === "administrator") {
+        router.push("/rezervacije");
+      } else {
+        router.push("/"); // Običan korisnik ide na početnu sa salama
+      }
     } else {
-      // Ako nije tačno, izbaci crvenu poruku
-      setError("Pogrešan email ili lozinka. Samo administrator ima pristup.");
+      setError("Korisnik nije pronađen. Pokušajte ponovo.");
     }
   };
+
+  
 
   return (
     <main className="min-h-screen bg-pink-50 flex items-center justify-center p-6 font-sans">
@@ -41,10 +67,10 @@ export default function LoginStranica() {
           <div>
             <label className="block text-sm font-bold text-pink-800 mb-2 ml-1">Email</label>
             <input 
-              type="email" 
+              type="text" 
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full p-4 rounded-2xl border-2 border-pink-50 focus:border-pink-500 focus:outline-none transition-all outline-none text-gray-800"
               placeholder="admin@primer.com"
             />

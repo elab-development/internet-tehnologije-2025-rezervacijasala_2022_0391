@@ -1,0 +1,52 @@
+import { Sala } from "@/app/lib/types";
+import { useState } from "react";
+
+export default function SalaCard({ sala, isKorisnik }: { sala: Sala; isKorisnik: boolean }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div className="card card-hover flex flex-col h-full overflow-hidden p-0 bg-white">
+      {/* SLIKA SA KAPACITETOM */}
+      <div className="relative h-60 w-full">
+        <img
+          src={sala.slike[0] || "/slike/placeholder.jpg"}
+          alt={sala.naziv}
+          className="w-full h-full object-cover"
+        />
+        {/* KAPACITET OBLAČIĆ (gore desno na prozoru sale) */}
+        <div className="absolute top-0 right-0 bg-[#222] text-white px-4 py-2 font-bold text-sm">
+          {sala.kapacitet} <br /> <span className="font-light text-xs uppercase">kapacitet</span>
+        </div>
+      </div>
+
+      {/* DETALJI ISPOD SLIKE */}
+      <div className="p-5 flex flex-col flex-grow text-left">
+        <h3 className="text-xl font-bold text-gray-900 uppercase mb-1">
+          {sala.naziv}
+        </h3>
+        <p className="text-sm text-gray-500 flex items-center gap-1 mb-4">
+          <span className="text-orange-400">📍</span> {sala.lokacija}
+        </p>
+
+        <div className="mt-auto space-y-2">
+          {/* DUGME REZERVIŠI (samo za ulogovane korisnike) */}
+          {isKorisnik && (
+            <button className="w-full bg-pink-600 text-white py-3 font-bold uppercase hover:bg-pink-700 transition-all">
+              Rezerviši salu
+            </button>
+          )}
+
+          {/* DUGME POZOVITE SA HOVER EFEKTOM BROJA */}
+          <button
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="w-full border border-gray-300 py-3 font-bold uppercase flex items-center justify-center gap-2 hover:bg-gray-50 transition-all text-gray-700"
+          >
+            <span>📞</span>
+            {isHovered ? "+381 66 777 888" : "Pozovite"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
