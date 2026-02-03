@@ -13,13 +13,13 @@ export default function SalaCard({ sala, isKorisnik }: { sala: Sala; isKorisnik:
           alt={sala.naziv}
           className="w-full h-full object-cover"
         />
-        {/* KAPACITET OBLAČIĆ (gore desno na prozoru sale) */}
+        {/* KAPACITET (gore desno na prozoru sale) */}
         <div className="absolute top-0 right-0 bg-[#222] text-white px-4 py-2 font-bold text-sm">
           {sala.kapacitet} <br /> <span className="font-light text-xs uppercase">kapacitet</span>
         </div>
       </div>
 
-      {/* DETALJI ISPOD SLIKE */}
+      {/* DETALJI ISPOD SLIKE U PROZORU SALE*/}
       <div className="p-5 flex flex-col flex-grow text-left">
         <h3 className="text-xl font-bold text-gray-900 uppercase mb-1">
           {sala.naziv}
@@ -36,7 +36,7 @@ export default function SalaCard({ sala, isKorisnik }: { sala: Sala; isKorisnik:
             </button>
           )}
 
-          {/* DUGME POZOVITE SA HOVER EFEKTOM BROJA */}
+          {/* DUGME POZOVITE */}
           <button
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
