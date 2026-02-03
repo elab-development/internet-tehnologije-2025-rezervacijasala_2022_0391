@@ -1,7 +1,13 @@
 import { Sala } from "@/app/lib/types";
 import { useState } from "react";
 
-export default function SalaCard({ sala, isKorisnik }: { sala: Sala; isKorisnik: boolean }) {
+export default function SalaCard({
+  sala,
+  isKorisnik,
+}: {
+  sala: Sala;
+  isKorisnik: boolean;
+}) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -15,7 +21,8 @@ export default function SalaCard({ sala, isKorisnik }: { sala: Sala; isKorisnik:
         />
         {/* KAPACITET (gore desno na prozoru sale) */}
         <div className="absolute top-0 right-0 bg-[#222] text-white px-4 py-2 font-bold text-sm">
-          {sala.kapacitet} <br /> <span className="font-light text-xs uppercase">kapacitet</span>
+          {sala.kapacitet} <br />{" "}
+          <span className="font-light text-xs uppercase">kapacitet</span>
         </div>
       </div>
 
@@ -27,7 +34,9 @@ export default function SalaCard({ sala, isKorisnik }: { sala: Sala; isKorisnik:
         <p className="text-sm text-gray-500 flex items-center gap-1 mb-4">
           <span className="text-orange-400">📍</span> {sala.lokacija}
         </p>
-
+        <p className="text-sm font-semibold text-pink-950 mb-4 italic">
+          Cena na upit
+        </p>
         <div className="mt-auto space-y-2">
           {/* DUGME REZERVIŠI (samo za ulogovane korisnike) */}
           {isKorisnik && (
