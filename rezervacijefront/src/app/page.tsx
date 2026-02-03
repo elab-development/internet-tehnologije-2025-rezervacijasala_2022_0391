@@ -19,11 +19,11 @@ const TIPOVI_DOGADJAJA = [
   { idTipDogadjaja: 9, naziv: "Kulturni događaj" },
 ];
 
-export default function Home() {
+export default function HomePage() {
   const [kapacitetFilter, setKapacitetFilter] = useState("sve");
   const [tipFilter, setTipFilter] = useState<number | null>(null);
   const [showMenu, setShowMenu] = useState(false);
-
+  const [sortOrder, setSortOrder] = useState("default");
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -60,11 +60,20 @@ export default function Home() {
     return matchesKapacitet && matchesTip;
   });
 
+  const prikazaneSale = [...filtriraneSale].sort((a, b) => {
+    if (sortOrder === "az") {
+      return a.naziv.localeCompare(b.naziv); // a-z
+    } else if (sortOrder === "za") {
+      return b.naziv.localeCompare(a.naziv); // obrnuto
+    }
+    return 0; // podrazumevano
+  });
+
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* --- HEADER SEKCIJA (Kao na slici) --- */}
+      {/* --- HEADER SEKCIJA --- */}
       <div className="bg-white border-b py-6 px-8 flex justify-between items-center shadow-sm">
-        {/* LEVO: Telefon sticker */}
+        {/* Telefon*/}
         <div className="flex items-center gap-2 text-pink-800 font-semibold group cursor-pointer">
           <div className="bg-pink-100 p-2 rounded-full group-hover:bg-pink-200 transition-colors">
             <Phone size={18} className="text-pink-600" />
@@ -72,7 +81,7 @@ export default function Home() {
           <span className="text-sm">+381 66 777 888</span>
         </div>
 
-        {/* SREDINA: Naslov */}
+        {/*Naslov*/}
         <div className="text-center">
           <h1 className="text-3xl font-serif text-pink-950 tracking-[0.2em] uppercase font-light">
             Rezervacije Sala
@@ -80,7 +89,7 @@ export default function Home() {
           <div className="h-1 w-20 bg-pink-200 mx-auto mt-1 rounded-full"></div>
         </div>
 
-        {/* DESNO: Socijalne mreže i Menu */}
+        {/*Socijalne mreže i Menu */}
         <div className="flex items-center gap-6">
           <div className="flex gap-4 items-center border-r border-pink-100 pr-6">
             <a href="#" className="group">
@@ -139,7 +148,7 @@ export default function Home() {
       </div>
 
       <div className="max-w-7xl mx-auto p-8">
-        {/* --- FILTER SEKCIJA (Iznad sala) --- */}
+        {/* --- FILTER SEKCIJA--- */}
         <div className="bg-white p-8 rounded-2xl shadow-sm mb-12 flex flex-wrap gap-10 items-end border border-pink-50">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-[10px] font-black uppercase tracking-widest text-pink-400 mb-3">
@@ -178,6 +187,19 @@ export default function Home() {
               ))}
             </select>
           </div>
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-pink-400 mb-3">
+              Sortiraj
+            </label>
+            <select
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="w-full border-b-2 border-pink-100 focus:border-pink-500 outline-none py-2 bg-transparent font-semibold text-pink-900 transition-all cursor-pointer"
+            >
+              <option value="default">Podrazumevano</option>
+              <option value="az">(A - Z)</option>
+              <option value="za">(Z - A)</option>
+            </select>
+          </div>
         </div>
 
         {/* --- NASLOV SEKCIJE --- */}
@@ -192,7 +214,7 @@ export default function Home() {
 
         {/* --- GRID SA SALAMA --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {filtriraneSale.map((sala) => (
+          {prikazaneSale.map((sala) => (
             <SalaCard
               key={sala.idSale}
               sala={sala}
