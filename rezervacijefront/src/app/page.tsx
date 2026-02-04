@@ -1,27 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { mock_sale } from "@/lib/mock/sale";
+//import { mock_sale } from "@/lib/mock/sale";
+import { api } from "@/lib/api";
 import SalaCard from "@/components/SalaCard";
 import Link from "next/link";
 import { Instagram, Facebook, Youtube, Phone, Search } from "lucide-react";
-import { User } from "@/lib/types";
+import { User, Sala, TipDogadjaja } from "@/lib/types";
 import { mock_karakteristike } from "@/lib/mock/karakteristike";
 
 
 const TIPOVI_DOGADJAJA = [
-  { idTipDogadjaja: 1, naziv: "Poslovni sastanak" },
-  { idTipDogadjaja: 2, naziv: "Konferencija" },
-  { idTipDogadjaja: 3, naziv: "Radionica (Workshop)" },
-  { idTipDogadjaja: 4, naziv: "Proslava rođendana" },
-  { idTipDogadjaja: 5, naziv: "Venčanje" },
-  { idTipDogadjaja: 6, naziv: "Seminar" },
-  { idTipDogadjaja: 7, naziv: "Team building" },
-  { idTipDogadjaja: 8, naziv: "Prezentacija proizvoda" },
-  { idTipDogadjaja: 9, naziv: "Kulturni događaj" },
+  { id: 1, naziv: "Poslovni sastanak" },
+  { id: 2, naziv: "Konferencija" },
+  { id: 3, naziv: "Radionica (Workshop)" },
+  { id: 4, naziv: "Proslava rođendana" },
+  { id: 5, naziv: "Venčanje" },
+  { id: 6, naziv: "Seminar" },
+  { id: 7, naziv: "Team building" },
+  { id: 8, naziv: "Prezentacija proizvoda" },
+  { id: 9, naziv: "Kulturni događaj" },
 ];
 
 export default function HomePage() {
+  // STANJE ZA PODATKE IZ BAZE ANJAA
+  const [saleIzBaze, setSaleIzBaze] = useState<Sala[]>([]);
+  const [loading, setLoading] = useState(true);
+  //
   const [showFilters, setShowFilters] = useState(false);
   const [tempKapacitet, setTempKapacitet] = useState("sve");
   const [appliedKapacitet, setAppliedKapacitet] = useState("sve");
@@ -39,8 +44,22 @@ export default function HomePage() {
   useEffect(() => {
     const storedUser = localStorage.getItem("ulogovan_korisnik");
     if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
+      const parsed = JSON.parse(storedUser);
+      console.log("Korisnik iz baze:", parsed); // OVO DODAJ
+      setCurrentUser(parsed);
+      // setCurrentUser(JSON.parse(storedUser)); ove tri linije iznad nove
     }
+    //ANJA poziv laravel apija
+    api.getSale()
+      .then((data) => {
+        setSaleIzBaze(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Greška pri učitavanju:", err);
+        setLoading(false);
+      });
+    //
   }, []);
 
   const resetujFiltere = () => {
@@ -63,7 +82,10 @@ export default function HomePage() {
   };
 
   // LOGIKA FILTRIRANJA
-  const filtriraneSale = mock_sale.filter((sala) => {
+  // pre iz mocka
+  //const filtriraneSale = mock_sale.filter((sala) => {
+  // poslee, iz baze
+  const filtriraneSale = saleIzBaze.filter((sala) => {
     // PRETRAGA (Proverava naziv i lokaciju)
     const matchesSearch = 
       sala.naziv.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -82,8 +104,8 @@ export default function HomePage() {
 
     let matchesTip =
       appliedTipovi.length > 0
-        ? sala.tipoviDogadjaja?.some((t) =>
-            appliedTipovi.includes(t.idTipDogadjaja),
+        ? sala.tipovi_dogadjaja?.some((t) =>
+            appliedTipovi.includes(t.id),
           )
         : true;
 
@@ -91,7 +113,7 @@ export default function HomePage() {
     let matchesKarakteristike =
       appliedKarakteristike.length > 0
         ? appliedKarakteristike.every((izabraniId) =>
-            sala.karakteristike?.some((k) => k.idKarakteristika === izabraniId),
+            sala.karakteristike?.some((k) => k.id === izabraniId), //zarez?
           )
         : true;
 
@@ -111,6 +133,9 @@ export default function HomePage() {
     return 0; // podrazumevano
   });
 
+//  PRIKAZ LOADING STANJA
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-pink-600 font-bold uppercase tracking-widest animate-pulse">Učitavanje prostora...</div>;
+//
   return (
     <main className="min-h-screen bg-gray-50">
       {/* --- HEADER SEKCIJA --- */}
@@ -165,8 +190,12 @@ export default function HomePage() {
               <div className="absolute right-0 mt-3 w-44 bg-white shadow-2xl border border-pink-100 rounded-xl z-50 overflow-hidden">
                 {currentUser ? (
                   <>
-                    <div className="px-6 py-2 border-b border-pink-50 text-[10px] text-pink-400 font-bold uppercase">
-                      {currentUser.ime} {currentUser.prezime}
+                    <div className="px-6 py-4 border-b border-pink-50 bg-pink-50/30 text-xs text-pink-900 font-bold uppercase tracking-wider">
+                      
+                       {currentUser.ime} {currentUser.prezime}
+                      <div className="text-[9px] text-pink-400 font-medium lowercase italic mt-1">
+                        role: {currentUser.uloga}
+                       </div>
                     </div>
                     <button
                       onClick={handleLogout}
@@ -234,17 +263,17 @@ export default function HomePage() {
                   <div className="max-h-40 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-pink-100">
                     {TIPOVI_DOGADJAJA.map((t) => (
                       <label
-                        key={t.idTipDogadjaja}
+                        key={t.id}
                         className="flex items-center gap-3 cursor-pointer group"
                       >
                         <input
                           type="checkbox"
-                          checked={tempTipovi.includes(t.idTipDogadjaja)}
+                          checked={tempTipovi.includes(t.id)}
                           onChange={() => {
                             setTempTipovi((prev) =>
-                              prev.includes(t.idTipDogadjaja)
-                                ? prev.filter((id) => id !== t.idTipDogadjaja)
-                                : [...prev, t.idTipDogadjaja],
+                              prev.includes(t.id)
+                                ? prev.filter((id) => id !== t.id)
+                                : [...prev, t.id],
                             );
                           }}
                           className="w-5 h-5 accent-pink-600 rounded-md cursor-pointer"
@@ -265,17 +294,17 @@ export default function HomePage() {
                   <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1">
                     {mock_karakteristike.map((k) => (
                       <button
-                        key={k.idKarakteristika}
+                        key={k.id}
                         type="button"
                         onClick={() => {
                           setTempKarakteristike((prev) =>
-                            prev.includes(k.idKarakteristika)
-                              ? prev.filter((id) => id !== k.idKarakteristika)
-                              : [...prev, k.idKarakteristika],
+                            prev.includes(k.id)
+                              ? prev.filter((id) => id !== k.id)
+                              : [...prev, k.id],
                           );
                         }}
                         className={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all border ${
-                          tempKarakteristike.includes(k.idKarakteristika)
+                          tempKarakteristike.includes(k.id)
                             ? "bg-pink-600 border-pink-600 text-white shadow-md shadow-pink-100"
                             : "bg-gray-50 border-gray-100 text-gray-400 hover:border-pink-200"
                         }`}
@@ -357,10 +386,11 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {prikazaneSale.map((sala) => (
             <SalaCard
-              key={sala.idSale}
+              key={sala.id}
               sala={sala}
               // Ovde menjamo: biće true samo ako je uloga "ulogovan"
-              isKorisnik={currentUser?.uloga === "ulogovan"}
+              // i admin moze da vidi sale pa dodajemo i za njega dozvolu || currentUser?.uloga === "administrator"
+              isKorisnik={currentUser?.uloga === "ulogovan" || currentUser?.uloga === "administrator"}
             />
           ))}
         </div>

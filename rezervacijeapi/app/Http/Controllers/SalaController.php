@@ -12,11 +12,23 @@ class SalaController extends Controller
      * Display a listing of the resource.
      */
     //prikaz svih sala
-    public function index()
+
+//STARA INDEX FUNKCIJA
+
+    /*public function index()
     {
         $sale = Sala::all();
         return response()->json($sale);
-    }
+    }*/
+
+
+    public function index()
+{
+    // Povlačimo sve sale, ali i njihove relacije koje smo definisali u modelu
+    $sale = Sala::with(['tipoviDogadjaja', 'karakteristike'])->get();  //tipoviDogadjaja i karakteristike su metode u modelu Sala, ne tabele!
+    
+    return response()->json($sale);
+}
 
     /**
      * Show the form for creating a new resource.

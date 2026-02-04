@@ -3,18 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Ovo nam treba za prebacivanje stranica
 import { mock_korisnici } from "@/lib/mock/korisnici";
+import { api } from "@/lib/api"; // Uvozimo naš API
 
 export default function LoginStranica() {
   // const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Za poruku ako pogrešiš podatke
+  const [loading, setLoading] = useState(false); // Da onemogućimo dugme dok traje provera
   
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Resetuj grešku na početku
+    setLoading(true);
 
   //   // PROVERA: Da li je korisnik administrator?
   //   if (email === "admin@primer.com" && password === "admin123") {
@@ -25,26 +28,42 @@ export default function LoginStranica() {
   //     setError("Pogrešan email ili lozinka. Samo administrator ima pristup.");
   //   }
   // };
+  try{
 
-  const korisnik = mock_korisnici.find(k => k.korisnickoIme === username);
-
-    if (korisnik) {
-      if (korisnik.banovan) {
+   //saljemo podatke laravelu
+  //const korisnik = mock_korisnici.find(k => k.korisnickoIme === username);
+    const korisnik = await api.login({
+      email: username, // šaljemo username (koji je email) pod ključem 'email'
+      password: password, // šaljemo lozinku pod ključem 'password'
+       // korisnickoIme: username,
+       // lozinka: password,
+    });
+    console.log("Šta je stiglo iz baze:", korisnik);
+    localStorage.setItem("ulogovan_korisnik", JSON.stringify(korisnik.user));
+    localStorage.setItem("token", korisnik.token);
+    
+      if (korisnik.user.banovan) {
         setError("Vaš nalog je banovan.");
+        setLoading(false);
         return;
       }
 
       // Čuvamo podatke u memoriji browsera da bi ostale stranice znale ko smo
-      localStorage.setItem("ulogovan_korisnik", JSON.stringify(korisnik));
+      //localStorage.setItem("ulogovan_korisnik", JSON.stringify(korisnik));
 
       // PREUSMERAVANJE NA OSNOVU ULOGE
-      if (korisnik.uloga === "administrator") {
+      if (korisnik.user.uloga === "administrator") {
         router.push("/rezervacije");
+
       } else {
         router.push("/"); // Običan korisnik ide na početnu sa salama
       }
-    } else {
-      setError("Korisnik nije pronađen. Pokušajte ponovo.");
+    // osvezavanje stranice da bi header povukao novog korisnika??
+    router.refresh();
+  } catch(err: any){
+    setError(err.message || "Neuspešna prijava. Proverite podatke.");
+    } finally {
+      setLoading(false);
     }
   };
 

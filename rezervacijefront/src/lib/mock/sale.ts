@@ -2,7 +2,7 @@ import { Sala } from "../types";
 
 export const mock_sale: Sala[] = [
     {
-        idSale: 1,
+        id: 1,
         naziv: "Velika Konferencijska Sala",
         slug: "velika-konferencijska-sala",
         kapacitet: 150,
@@ -12,17 +12,17 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Moderna sala opremljena najnovijom audio-vizuelnom tehnikom, idealna za velike seminare.",
         karakteristike: [
-            { idKarakteristika: 2, naziv: "Projektor" },
-            { idKarakteristika: 1, naziv: "Klima uređaj" },
-            { idKarakteristika: 5, naziv: "Brzi internet (Wi-Fi)" }
+            { id: 2, naziv: "Projektor" },
+            { id: 1, naziv: "Klima uređaj" },
+            { id: 5, naziv: "Brzi internet (Wi-Fi)" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 2, naziv: "Konferencija" },
-            { idTipDogadjaja: 6, naziv: "Seminar" }
+        tipovi_dogadjaja: [
+            { id: 2, naziv: "Konferencija" },
+            { id: 6, naziv: "Seminar" }
         ]
     },
     {
-        idSale: 2,
+        id: 2,
         naziv: "Plavi Salon",
         slug: "plavi-salon",
         kapacitet: 30,
@@ -32,17 +32,17 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Intiman prostor pogodan za poslovne sastanke i manje radionice.",
         karakteristike: [
-            { idKarakteristika: 1, naziv: "Klima uređaj" },
-            { idKarakteristika: 5, naziv: "Brzi internet (Wi-Fi)" },
-            { idKarakteristika: 3, naziv: "Bela tabla" }
+            { id: 1, naziv: "Klima uređaj" },
+            { id: 5, naziv: "Brzi internet (Wi-Fi)" },
+            { id: 3, naziv: "Bela tabla" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 1, naziv: "Poslovni sastanak" },
-            { idTipDogadjaja: 3, naziv: "Radionica (Workshop)" }
+        tipovi_dogadjaja: [
+            { id: 1, naziv: "Poslovni sastanak" },
+            { id: 3, naziv: "Radionica (Workshop)" }
         ]
     },
     {
-        idSale: 3,
+        id: 3,
         naziv: "IT Lab 404",
         slug: "it-lab-404",
         kapacitet: 30,
@@ -52,15 +52,15 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Sala sa računarskom opremom za tehničke obuke.",
         karakteristike: [
-            { idKarakteristika: 11, naziv: "Računari" },
-            { idKarakteristika: 2, naziv: "Projektor" }
+            { id: 11, naziv: "Računari" },
+            { id: 2, naziv: "Projektor" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 3, naziv: "Radionica (Workshop)" }
+        tipovi_dogadjaja: [
+            { id: 3, naziv: "Radionica (Workshop)" }
         ]
     },
     {
-        idSale: 4,
+        id: 4,
         naziv: "Amfiteatar",
         slug: "amfiteatar",
         kapacitet: 300,
@@ -70,17 +70,17 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Idealan za masovna predavanja, seminare i svečane akademije.",
         karakteristike: [
-            { idKarakteristika: 2, naziv: "Projektor" },
-            { idKarakteristika: 1, naziv: "Klima uređaj" },
-            { idKarakteristika: 4, naziv: "Ozvučenje" }
+            { id: 2, naziv: "Projektor" },
+            { id: 1, naziv: "Klima uređaj" },
+            { id: 4, naziv: "Ozvučenje" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 6, naziv: "Seminar" },
-            { idTipDogadjaja: 9, naziv: "Kulturni događaj" }
+        tipovi_dogadjaja: [
+            { id: 6, naziv: "Seminar" },
+            { id: 9, naziv: "Kulturni događaj" }
         ]
     },
     {
-        idSale: 5,
+        id: 5,
         naziv: "Mala sala za sastanke",
         slug: "mala-sala-za-sastanke",
         kapacitet: 10,
@@ -90,15 +90,15 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Tiha sala za brze konsultacije i timske sastanke.",
         karakteristike: [
-            { idKarakteristika: 5, naziv: "Brzi internet (Wi-Fi)" },
-            { idKarakteristika: 3, naziv: "Bela tabla" }
+            { id: 5, naziv: "Brzi internet (Wi-Fi)" },
+            { id: 3, naziv: "Bela tabla" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 1, naziv: "Poslovni sastanak" }
+        tipovi_dogadjaja: [
+            { id: 1, naziv: "Poslovni sastanak" }
         ]
     },
     {
-        idSale: 6,
+        id: 6,
         naziv: "Laboratorija za fiziku",
         slug: "laboratorija-za-fiziku",
         kapacitet: 25,
@@ -108,15 +108,15 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Specijalizovana sala sa laboratorijskim stolovima i opremom za eksperimente.",
         karakteristike: [
-            { idKarakteristika: 11, naziv: "Računari" },
-            { idKarakteristika: 5, naziv: "Brzi internet (Wi-Fi)" }
+            { id: 11, naziv: "Računari" },
+            { id: 5, naziv: "Brzi internet (Wi-Fi)" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 3, naziv: "Radionica (Workshop)" }
+        tipovi_dogadjaja: [
+            { id: 3, naziv: "Radionica (Workshop)" }
         ]
     },
     {
-        idSale: 7,
+        id: 7,
         naziv: "Sala Mali Princ",
         slug: "sala-mali-princ",
         kapacitet: 80,
@@ -126,17 +126,17 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Uživajte u prigušenim svetlima i toploj atmosferi našeg prostora, stvorenog za proslave koje se pamte po bliskosti, a ne po gužvi.",
         karakteristike: [
-            { idKarakteristika: 1, naziv: "Klima uređaj" },
-            { idKarakteristika: 4, naziv: "Ozvučenje" },
-            { idKarakteristika: 10, naziv: "Ergonomske stolice" }
+            { id: 1, naziv: "Klima uređaj" },
+            { id: 4, naziv: "Ozvučenje" },
+            { id: 10, naziv: "Ergonomske stolice" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 5, naziv: "Venčanje" },
-            { idTipDogadjaja: 9, naziv: "Kulturni događaj" }
+        tipovi_dogadjaja: [
+            { id: 5, naziv: "Venčanje" },
+            { id: 9, naziv: "Kulturni događaj" }
         ]
     },
     {
-        idSale: 8,
+        id: 8,
         naziv: "Coworking zona",
         slug: "coworking-zona",
         kapacitet: 50,
@@ -146,17 +146,17 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Otvoren prostor za zajednički rad studenata u opuštenoj atmosferi.",
         karakteristike: [
-            { idKarakteristika: 5, naziv: "Brzi internet (Wi-Fi)" },
-            { idKarakteristika: 9, naziv: "Aparat za kafu" },
-            { idKarakteristika: 10, naziv: "Ergonomske stolice" }
+            { id: 5, naziv: "Brzi internet (Wi-Fi)" },
+            { id: 9, naziv: "Aparat za kafu" },
+            { id: 10, naziv: "Ergonomske stolice" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 3, naziv: "Radionica (Workshop)" },
-            { idTipDogadjaja: 7, naziv: "Team building" }
+        tipovi_dogadjaja: [
+            { id: 3, naziv: "Radionica (Workshop)" },
+            { id: 7, naziv: "Team building" }
         ]
     },
     {
-        idSale: 9,
+        id: 9,
         naziv: "Sala za video konferencije",
         slug: "sala-za-video-konferencije",
         kapacitet: 15,
@@ -166,17 +166,17 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Specijalizovana sala sa kamerama visoke rezolucije za online sastanke.",
         karakteristike: [
-            { idKarakteristika: 8, naziv: "Televizor 4K" },
-            { idKarakteristika: 2, naziv: "Projektor" },
-            { idKarakteristika: 5, naziv: "Brzi internet (Wi-Fi)" }
+            { id: 8, naziv: "Televizor 4K" },
+            { id: 2, naziv: "Projektor" },
+            { id: 5, naziv: "Brzi internet (Wi-Fi)" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 1, naziv: "Poslovni sastanak" },
-            { idTipDogadjaja: 8, naziv: "Prezentacija proizvoda" }
+        tipovi_dogadjaja: [
+            { id: 1, naziv: "Poslovni sastanak" },
+            { id: 8, naziv: "Prezentacija proizvoda" }
         ]
     },
     {
-        idSale: 10,
+        id: 10,
         naziv: "Svečana dvorana",
         slug: "svecana-dvorana",
         kapacitet: 200,
@@ -186,13 +186,13 @@ export const mock_sale: Sala[] = [
         ],
         opis: "Prostrana dvorana pogodna za proslave i velike prezentacije.",
         karakteristike: [
-            { idKarakteristika: 4, naziv: "Ozvučenje" },
-            { idKarakteristika: 1, naziv: "Klima uređaj" },
-            { idKarakteristika: 6, naziv: "Video nadzor" }
+            { id: 4, naziv: "Ozvučenje" },
+            { id: 1, naziv: "Klima uređaj" },
+            { id: 6, naziv: "Video nadzor" }
         ],
-        tipoviDogadjaja: [
-            { idTipDogadjaja: 4, naziv: "Proslava rođendana" },
-            { idTipDogadjaja: 5, naziv: "Venčanje" }
+        tipovi_dogadjaja: [
+            { id: 4, naziv: "Proslava rođendana" },
+            { id: 5, naziv: "Venčanje" }
         ]
     }
 ];

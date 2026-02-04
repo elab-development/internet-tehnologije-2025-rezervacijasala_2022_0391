@@ -1,7 +1,7 @@
 // src/lib/types.ts
 
 export type User = {
-    idKorisnika: number;
+    id: number;
     ime: string;
     prezime: string;
     korisnickoIme: string;
@@ -11,30 +11,30 @@ export type User = {
 };
 
 export type Karakteristika = {
-    idKarakteristika: number;
+    id: number;
     naziv: string;
 };
 
 export type TipDogadjaja = {
-    idTipDogadjaja: number;
+    id: number;
     naziv: string;
 };
 
 export type Sala = {
-    idSale: number;
+    id: number;
     naziv: string;
     slug: string;
     kapacitet: number;
     opis: string;
     lokacija: string;
-    slike:string[]; // ovde ce da budu putanje do slika
+    slike?:string[]; // ovde ce da budu putanje do slika
     // Ako uz salu šalješ i njene karakteristike ili tipove:
    karakteristike: Karakteristika[]; 
-  tipoviDogadjaja: TipDogadjaja[];
+  tipovi_dogadjaja: TipDogadjaja[];
 };
 
 export type Rezervacija = {
-    idRezervacije: number;
+    id: number;
     pocetak: string; // U JS/TS datumi iz API-ja stižu kao stringovi (ISO format)
     kraj: string;
     status: string;
@@ -44,5 +44,5 @@ export type Rezervacija = {
     // Opciono: ako  API uz rezervaciju šalje ceo objekat Sale ili Korisnika
     sala?: Sala;
     korisnik?: User;
-    tipDogadjaja?: TipDogadjaja;
+    tip_dogadjaja?: TipDogadjaja;
 };

@@ -2,7 +2,7 @@ import { Rezervacija } from "../types";
 
 export const MOCK_REZERVACIJE: Rezervacija[] = [
     {
-        idRezervacije: 1,
+        id: 1,
         pocetak: "2026-02-10T10:00:00",
         kraj: "2026-02-10T12:00:00",
         status: "potvrdjena",
@@ -11,7 +11,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 2 // Konferencija (Sala 1 podržava ID 2)
     },
     {
-        idRezervacije: 2,
+        id: 2,
         pocetak: "2026-02-11T14:00:00",
         kraj: "2026-02-11T16:00:00",
         status: "na_cekanju",
@@ -20,7 +20,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 1 // Poslovni sastanak (Sala 2 podržava ID 1)
     },
     {
-        idRezervacije: 3,
+        id: 3,
         pocetak: "2026-02-12T09:00:00",
         kraj: "2026-02-12T13:00:00",
         status: "zavrsena",
@@ -29,7 +29,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 3 // Radionica (Workshop) (Sala 3 podržava ID 3)
     },
     {
-        idRezervacije: 4,
+        id: 4,
         pocetak: "2026-02-15T10:00:00",
         kraj: "2026-02-15T18:00:00",
         status: "otkazana",
@@ -38,7 +38,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 6 // Seminar (Sala 4 podržava ID 6)
     },
     {
-        idRezervacije: 5,
+        id: 5,
         pocetak: "2026-02-16T12:00:00",
         kraj: "2026-02-16T14:00:00",
         status: "u_toku",
@@ -47,7 +47,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 1 // Poslovni sastanak (Sala 5 podržava ID 1)
     },
     {
-        idRezervacije: 6,
+        id: 6,
         pocetak: "2026-02-17T09:00:00",
         kraj: "2026-02-17T11:00:00",
         status: "potvrdjena",
@@ -56,7 +56,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 3 // Radionica (Sala 6 podržava ID 3)
     },
     {
-        idRezervacije: 7,
+        id: 7,
         pocetak: "2026-02-20T17:00:00",
         kraj: "2026-02-20T22:00:00",
         status: "na_cekanju",
@@ -65,7 +65,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 5 // Venčanje (Sala 7 podržava ID 5)
     },
     {
-        idRezervacije: 8,
+        id: 8,
         pocetak: "2026-02-21T10:00:00",
         kraj: "2026-02-21T15:00:00",
         status: "zavrsena",
@@ -74,7 +74,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 7 // Team building (Sala 8 podržava ID 7)
     },
     {
-        idRezervacije: 9,
+        id: 9,
         pocetak: "2026-02-22T13:00:00",
         kraj: "2026-02-22T15:00:00",
         status: "u_toku",
@@ -83,7 +83,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 8 // Prezentacija proizvoda (Sala 9 podržava ID 8)
     },
     {
-        idRezervacije: 10,
+        id: 10,
         pocetak: "2026-02-25T19:00:00",
         kraj: "2026-02-25T23:00:00",
         status: "otkazana",
@@ -92,7 +92,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 4 // Proslava rođendana (Sala 10 podržava ID 4)
     },
     {
-        idRezervacije: 11,
+        id: 11,
         pocetak: "2026-02-26T10:00:00",
         kraj: "2026-02-26T12:00:00",
         status: "potvrdjena",
@@ -101,7 +101,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 6 // Seminar (Sala 1 podržava ID 6)
     },
     {
-        idRezervacije: 12,
+        id: 12,
         pocetak: "2026-02-27T08:00:00",
         kraj: "2026-02-27T10:00:00",
         status: "na_cekanju",
@@ -110,7 +110,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 1 // Poslovni sastanak
     },
     {
-        idRezervacije: 13,
+        id: 13,
         pocetak: "2026-03-01T15:00:00",
         kraj: "2026-03-01T17:00:00",
         status: "zavrsena",
@@ -119,7 +119,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 3 // Radionica
     },
     {
-        idRezervacije: 14,
+        id: 14,
         pocetak: "2026-03-02T11:00:00",
         kraj: "2026-03-02T14:00:00",
         status: "potvrdjena",
@@ -128,7 +128,7 @@ export const MOCK_REZERVACIJE: Rezervacija[] = [
         idTipDogadjaja: 9 // Kulturni događaj
     },
     {
-        idRezervacije: 15,
+        id: 15,
         pocetak: "2026-03-05T10:00:00",
         kraj: "2026-03-05T12:00:00",
         status: "potvrdjena",

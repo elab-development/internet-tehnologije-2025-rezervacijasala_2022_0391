@@ -16,7 +16,8 @@ export default function SalaCard({
       {/* SLIKA SA KAPACITETOM */}
       <div className="relative h-60 w-full">
         <img
-          src={sala.slike[0] || "/slike/placeholder.jpg"}
+          //src={sala.slike[0] || "/slike/placeholder.jpg"}
+          src={(sala.slike && sala.slike.length > 0) ? sala.slike[0] : "/slike/placeholder.jpg"}
           alt={sala.naziv}
           className="w-full h-full object-cover"
         />

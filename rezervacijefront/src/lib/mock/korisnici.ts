@@ -2,7 +2,7 @@ import { User } from "../types";
 
 export const mock_korisnici: User[] = [
     {
-        idKorisnika: 1,
+        id: 1,
         ime: "Anja",
         prezime: "Antić",
         korisnickoIme: "anja_admin",
@@ -10,7 +10,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 2,
+        id: 2,
         ime: "Marko",
         prezime: "Marković",
         korisnickoIme: "marko99",
@@ -18,7 +18,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 3,
+        id: 3,
         ime: "Jelena",
         prezime: "Jovanović",
         korisnickoIme: "jelena_jov",
@@ -26,7 +26,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 4,
+        id: 4,
         ime: "Stefan",
         prezime: "Stanković",
         korisnickoIme: "stefan_s",
@@ -34,7 +34,7 @@ export const mock_korisnici: User[] = [
         banovan: true
     },
     {
-        idKorisnika: 5,
+        id: 5,
         ime: "Milica",
         prezime: "Milić",
         korisnickoIme: "milica_m",
@@ -42,7 +42,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 6,
+        id: 6,
         ime: "Nikola",
         prezime: "Nikolić",
         korisnickoIme: "nikola_n",
@@ -50,7 +50,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 7,
+        id: 7,
         ime: "Sara",
         prezime: "Sarić",
         korisnickoIme: "sara_s",
@@ -58,7 +58,7 @@ export const mock_korisnici: User[] = [
         banovan: true
     },
     {
-        idKorisnika: 8,
+        id: 8,
         ime: "Pavle",
         prezime: "Pavlović",
         korisnickoIme: "paja_p",
@@ -66,7 +66,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 9,
+        id: 9,
         ime: "Maja",
         prezime: "Majkić",
         korisnickoIme: "maja_m",
@@ -74,7 +74,7 @@ export const mock_korisnici: User[] = [
         banovan: false
     },
     {
-        idKorisnika: 10,
+        id: 10,
         ime: "Igor",
         prezime: "Ignić",
         korisnickoIme: "igor_i",

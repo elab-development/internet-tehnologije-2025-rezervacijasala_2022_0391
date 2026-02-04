@@ -1,15 +1,15 @@
 import { Karakteristika } from "../types";
 
 export const mock_karakteristike: Karakteristika[] = [
-    { idKarakteristika: 1, naziv: 'Klima uređaj' },
-    { idKarakteristika: 2, naziv: 'Projektor' },
-    { idKarakteristika: 3, naziv: 'Bela tabla' },
-    { idKarakteristika: 4, naziv: 'Ozvučenje' },
-    { idKarakteristika: 5, naziv: 'Brzi internet (Wi-Fi)' },
-    { idKarakteristika: 6, naziv: 'Video nadzor' },
-    { idKarakteristika: 7, naziv: 'Flipchart' },
-    { idKarakteristika: 8, naziv: 'Televizor 4K' },
-    { idKarakteristika: 9, naziv: 'Aparat za kafu' },
-    { idKarakteristika: 10, naziv: 'Ergonomske stolice' },
-    { idKarakteristika: 11, naziv: 'Računari' }
+    { id: 1, naziv: 'Klima uređaj' },
+    { id: 2, naziv: 'Projektor' },
+    { id: 3, naziv: 'Bela tabla' },
+    { id: 4, naziv: 'Ozvučenje' },
+    { id: 5, naziv: 'Brzi internet (Wi-Fi)' },
+    { id: 6, naziv: 'Video nadzor' },
+    { id: 7, naziv: 'Flipchart' },
+    { id: 8, naziv: 'Televizor 4K' },
+    { id: 9, naziv: 'Aparat za kafu' },
+    { id: 10, naziv: 'Ergonomske stolice' },
+    { id: 11, naziv: 'Računari' }
 ];
