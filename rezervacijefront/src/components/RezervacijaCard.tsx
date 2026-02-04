@@ -1,4 +1,4 @@
-import { Rezervacija } from "@/app/lib/types";
+import { Rezervacija } from "@/lib/types";
 
 export default function RezervacijaCard({ res }: { res: Rezervacija }) {
   // Boje za bedževe (statusi)

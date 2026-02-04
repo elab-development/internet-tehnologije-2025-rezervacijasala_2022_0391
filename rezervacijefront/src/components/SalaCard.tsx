@@ -1,5 +1,6 @@
-import { Sala } from "@/app/lib/types";
+import { Sala } from "@/lib/types";
 import { useState } from "react";
+import Link from "next/link"
 
 export default function SalaCard({
   sala,
@@ -34,9 +35,18 @@ export default function SalaCard({
         <p className="text-sm text-gray-500 flex items-center gap-1 mb-4">
           <span className="text-orange-400">📍</span> {sala.lokacija}
         </p>
-        <p className="text-sm font-semibold text-pink-950 mb-4 italic">
+        
+        <div className="flex items-center justify-between mb-auto">
+        <p className="text-sm font-semibold text-pink-950 italic">
           Cena na upit
         </p>
+        <Link 
+            href={`/sala/${sala.slug}`}
+            className="text-xs font-bold uppercase text-pink-600 hover:text-pink-800 transition-colors border-b border-pink-600"
+          >
+            Detalji o sali
+          </Link>
+          </div>
         <div className="mt-auto space-y-2">
           {/* DUGME REZERVIŠI (samo za ulogovane korisnike) */}
           {isKorisnik && (
@@ -44,12 +54,15 @@ export default function SalaCard({
               Rezerviši salu
             </button>
           )}
+         
+          
+
 
           {/* DUGME POZOVITE */}
           <button
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="w-full border border-gray-300 py-3 font-bold uppercase flex items-center justify-center gap-2 hover:bg-gray-50 transition-all text-gray-700"
+            className="w-full border border-gray-300 py-1 font-bold uppercase flex items-center justify-center gap-2 hover:bg-gray-50 transition-all text-gray-700"
           >
             <span>📞</span>
             {isHovered ? "+381 66 777 888" : "Pozovite"}

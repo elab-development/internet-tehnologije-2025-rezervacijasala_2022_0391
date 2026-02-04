@@ -1,7 +1,7 @@
 "use client"; // Ovo mora biti na vrhu da bi filteri radili!
 
 import { useState } from "react";
-import { Rezervacija } from "@/app/lib/types";
+import { Rezervacija } from "@/lib/types";
 import RezervacijaCard from "@/components/RezervacijaCard";
 
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Ovo nam treba za prebacivanje stranica
-import { mock_korisnici } from "@/app/lib/mock/korisnici";
+import { mock_korisnici } from "@/lib/mock/korisnici";
 
 export default function LoginStranica() {
   // const [email, setEmail] = useState("");

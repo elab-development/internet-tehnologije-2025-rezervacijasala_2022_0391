@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { mock_sale } from "@/app/lib/mock/sale";
+import { mock_sale } from "@/lib/mock/sale";
 import SalaCard from "@/components/SalaCard";
 import Link from "next/link";
-import { Instagram, Facebook, Youtube, Phone } from "lucide-react";
-import { User } from "@/app/lib/types";
-import { mock_karakteristike } from "@/app/lib/mock/karakteristike";
+import { Instagram, Facebook, Youtube, Phone, Search } from "lucide-react";
+import { User } from "@/lib/types";
+import { mock_karakteristike } from "@/lib/mock/karakteristike";
+
 
 const TIPOVI_DOGADJAJA = [
   { idTipDogadjaja: 1, naziv: "Poslovni sastanak" },
@@ -25,6 +26,7 @@ export default function HomePage() {
   const [tempKapacitet, setTempKapacitet] = useState("sve");
   const [appliedKapacitet, setAppliedKapacitet] = useState("sve");
   const [tempTipovi, setTempTipovi] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState(""); 
   const [appliedTipovi, setAppliedTipovi] = useState<number[]>([]);
   const [tempKarakteristike, setTempKarakteristike] = useState<number[]>([]);
   const [appliedKarakteristike, setAppliedKarakteristike] = useState<number[]>(
@@ -45,6 +47,7 @@ export default function HomePage() {
     setTempKapacitet("sve");
     setTempTipovi([]);
     setTempKarakteristike([]);
+    setSearchQuery("");
 
     // da bi se filteri ponistili odmah na ekranu
     setAppliedKapacitet("sve");
@@ -61,6 +64,11 @@ export default function HomePage() {
 
   // LOGIKA FILTRIRANJA
   const filtriraneSale = mock_sale.filter((sala) => {
+    // PRETRAGA (Proverava naziv i lokaciju)
+    const matchesSearch = 
+      sala.naziv.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      sala.lokacija.toLowerCase().includes(searchQuery.toLowerCase());
+    //KAPACITET
     let matchesKapacitet = true;
     if (appliedKapacitet === "do50") matchesKapacitet = sala.kapacitet <= 50;
     else if (appliedKapacitet === "50-100")
@@ -79,6 +87,7 @@ export default function HomePage() {
           )
         : true;
 
+        
     let matchesKarakteristike =
       appliedKarakteristike.length > 0
         ? appliedKarakteristike.every((izabraniId) =>
@@ -86,7 +95,7 @@ export default function HomePage() {
           )
         : true;
 
-    return matchesKapacitet && matchesTip && matchesKarakteristike;
+        return matchesSearch && matchesKapacitet && matchesTip && matchesKarakteristike; 
   });
 
   const prikazaneSale = [...filtriraneSale].sort((a, b) => {
@@ -94,6 +103,10 @@ export default function HomePage() {
       return a.naziv.localeCompare(b.naziv); // a-z
     } else if (sortOrder === "za") {
       return b.naziv.localeCompare(a.naziv); // obrnuto
+    }else if (sortOrder === "kapacitet_asc") {
+      return a.kapacitet - b.kapacitet; // Od najmanje ka najvećoj
+    } else if (sortOrder === "kapacitet_desc") {
+      return b.kapacitet - a.kapacitet; // Od najveće ka najmanjoj
     }
     return 0; // podrazumevano
   });
@@ -185,9 +198,11 @@ export default function HomePage() {
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 text-pink-950 px-6 py-3 rounded-xl font-bold transition-all border border-gray-100 uppercase text-xs tracking-widest"
             >
-              Detaljna pretraga{" "}
+              Filtriraj{" "}
               <span className="text-[10px]">{showFilters ? "▲" : "▼"}</span>
             </button>
+
+              
 
             {/* PROZORČIĆ */}
             {showFilters && (
@@ -296,7 +311,19 @@ export default function HomePage() {
               </div>
             )}
           </div>
-
+              {/* --- DODATO: POLJE ZA PRETRAGU --- */}
+    <div className="relative w-64 md:w-80">
+      <input
+        type="text"
+        placeholder="Pretraži sale ili lokacije..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-50 bg-gray-50/50 focus:bg-white focus:border-pink-200 outline-none transition-all text-sm font-medium text-pink-950"
+      />
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-300">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+    </div>
           {/* SORTIRANJE */}
           <div className="flex items-center gap-4 border-l border-pink-50 pl-10">
             <label className="text-[10px] font-black uppercase tracking-widest text-pink-400">
@@ -307,9 +334,11 @@ export default function HomePage() {
               onChange={(e) => setSortOrder(e.target.value)}
               className="bg-transparent font-bold text-pink-950 outline-none cursor-pointer text-sm"
             >
-              <option value="default">Default</option>
+              <option value="podrazumevano">Podrazumevano</option>
               <option value="az">A - Z</option>
               <option value="za">Z - A</option>
+              <option value="kapacitet_asc">Kapacitet: Manje ka većim</option>
+              <option value="kapacitet_desc">Kapacitet: Veće ka manjim</option>
             </select>
           </div>
         </div>
@@ -317,7 +346,7 @@ export default function HomePage() {
         {/* --- NASLOV SEKCIJE --- */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-light text-pink-950 uppercase tracking-[0.3em]">
-            Sale <span className="font-bold">Beograd</span>
+            Sale <span className="font-bold">Srbija</span>
           </h2>
           <p className="text-pink-800/60 mt-2 text-sm uppercase tracking-widest">
             Prostori za sve prilike

@@ -4,8 +4,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 1,
         naziv: "Velika Konferencijska Sala",
+        slug: "velika-konferencijska-sala",
         kapacitet: 150,
-        lokacija: "Sprat 1, Blok A",
+        lokacija: "Beograd, Vračar",
         slike:[
             "/slike/konfverencijskaSala.jpg"
         ],
@@ -23,8 +24,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 2,
         naziv: "Plavi Salon",
+        slug: "plavi-salon",
         kapacitet: 30,
-        lokacija: "Prizemlje",
+        lokacija: "Novi Sad, Centar",
         slike:[
             "/slike/plaviSalon.jpg"
         ],
@@ -42,8 +44,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 3,
         naziv: "IT Lab 404",
+        slug: "it-lab-404",
         kapacitet: 30,
-        lokacija: "Sprat 4",
+        lokacija: "Niš, Medijana",
         slike:[
             "/slike/ITLab.jpg"
         ],
@@ -59,8 +62,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 4,
         naziv: "Amfiteatar",
+        slug: "amfiteatar",
         kapacitet: 300,
-        lokacija: "Zgrada B, Prizemlje",
+        lokacija: "Beograd, Novi Beograd",
         slike:[
             "/slike/amfiteatar.jpg"
         ],
@@ -78,8 +82,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 5,
         naziv: "Mala sala za sastanke",
+        slug: "mala-sala-za-sastanke",
         kapacitet: 10,
-        lokacija: "Sprat 2, Kancelarija 205",
+        lokacija: "Beograd, Voždovac",
         slike:[
             "/slike/malaSala.jpg"
         ],
@@ -95,8 +100,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 6,
         naziv: "Laboratorija za fiziku",
+        slug: "laboratorija-za-fiziku",
         kapacitet: 25,
-        lokacija: "Suteren, Lab 01",
+        lokacija: "Novi Sad, Liman",
         slike:[
             "/slike/fizika.jpg"
         ],
@@ -111,13 +117,14 @@ export const mock_sale: Sala[] = [
     },
     {
         idSale: 7,
-        naziv: "Svečana sala Rektorata",
+        naziv: "Sala Mali Princ",
+        slug: "sala-mali-princ",
         kapacitet: 80,
-        lokacija: "Glavna zgrada, Sprat 1",
+        lokacija: "Beograd, Dorćol",
         slike:[
-            "/slike/rektorat.jpg"
+            "/slike/salamaliprinc.jpg"
         ],
-        opis: "Reprezentativna sala sa klasičnim nameštajem za važne prijeme i odbrane doktorata.",
+        opis: "Uživajte u prigušenim svetlima i toploj atmosferi našeg prostora, stvorenog za proslave koje se pamte po bliskosti, a ne po gužvi.",
         karakteristike: [
             { idKarakteristika: 1, naziv: "Klima uređaj" },
             { idKarakteristika: 4, naziv: "Ozvučenje" },
@@ -131,8 +138,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 8,
         naziv: "Coworking zona",
+        slug: "coworking-zona",
         kapacitet: 50,
-        lokacija: "Biblioteka, Desno krilo",
+        lokacija: "Beograd, Zemun",
         slike:[
             "/slike/coworking.jpg"
         ],
@@ -150,8 +158,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 9,
         naziv: "Sala za video konferencije",
+        slug: "sala-za-video-konferencije",
         kapacitet: 15,
-        lokacija: "Sprat 3, Tehnički blok",
+        lokacija: "Kragujevac, Bresnica",
         slike:[
             "/slike/videoKonferencija.jpg"
         ],
@@ -169,8 +178,9 @@ export const mock_sale: Sala[] = [
     {
         idSale: 10,
         naziv: "Svečana dvorana",
+        slug: "svecana-dvorana",
         kapacitet: 200,
-        lokacija: "Glavni hol",
+        lokacija: "Beograd, Stari grad",
         slike:[
             "/slike/svecanaDvorana.jpg"
         ],
