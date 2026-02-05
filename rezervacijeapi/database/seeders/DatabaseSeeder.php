@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
              $sveKarakteristike->random($brojKarakteristika)
             );
             if ($sala->naziv === 'Velika Konferencijska Sala') {
-                 $sala->tipoviDogadjaja()->attach([
+                $sala->tipoviDogadjaja()->attach([
                 $konferencija->id, 
                 $sastanak->id, 
                 $radionica->id,

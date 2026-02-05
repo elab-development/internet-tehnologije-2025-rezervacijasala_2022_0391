@@ -9,19 +9,19 @@ import { Instagram, Facebook, Youtube, Phone, Search } from "lucide-react";
 import { User, Sala, TipDogadjaja } from "@/lib/types";
 import { mock_karakteristike } from "@/lib/mock/karakteristike";
 
-
+/*
 const TIPOVI_DOGADJAJA = [
-  { id: 1, naziv: "Poslovni sastanak" },
-  { id: 2, naziv: "Konferencija" },
-  { id: 3, naziv: "Radionica (Workshop)" },
+  { id: 1, naziv: "Konferencija" },
+  { id: 2, naziv: "Seminar" },
+  { id: 3, naziv: "Venčanje" },
   { id: 4, naziv: "Proslava rođendana" },
-  { id: 5, naziv: "Venčanje" },
-  { id: 6, naziv: "Seminar" },
+  { id: 5, naziv: "Poslovni sastanak" },
+  { id: 6, naziv: "Radionica (Wokrshop))" },
   { id: 7, naziv: "Team building" },
-  { id: 8, naziv: "Prezentacija proizvoda" },
-  { id: 9, naziv: "Kulturni događaj" },
+  { id: 8, naziv: "Kulturni dogadjaj" },
+  
 ];
-
+*/
 export default function HomePage() {
   // STANJE ZA PODATKE IZ BAZE ANJAA
   const [saleIzBaze, setSaleIzBaze] = useState<Sala[]>([]);
@@ -41,6 +41,26 @@ export default function HomePage() {
   const [sortOrder, setSortOrder] = useState("default");
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  //novo
+  // DINAMIČKO IZVLAČENJE TIPOVA IZ PODATAKA KOJI SU STIGLI IZ BAZE
+  // Koristimo Map da bismo dobili samo jedinstvene objekte (da se ne ponavljaju)
+  const tipoviIzBaze = Array.from(
+    new Map(
+      saleIzBaze
+        .flatMap((s) => s.tipovi_dogadjaja || [])
+        .map((t) => [t.id, t])
+    ).values()
+  ).sort((a, b) => a.naziv.localeCompare(b.naziv));
+
+  // DINAMIČKO IZVLAČENJE KARAKTERISTIKA
+  const karakteristikeIzBaze = Array.from(
+    new Map(
+      saleIzBaze
+        .flatMap((s) => s.karakteristike || [])
+        .map((k) => [k.id, k])
+    ).values()
+  ).sort((a, b) => a.naziv.localeCompare(b.naziv));
+  //novo
   useEffect(() => {
     const storedUser = localStorage.getItem("ulogovan_korisnik");
     if (storedUser) {
@@ -52,6 +72,7 @@ export default function HomePage() {
     //ANJA poziv laravel apija
     api.getSale()
       .then((data) => {
+        console.log("Sale iz baze sa vezama:", data); // Pogledaj sve salu u konzoli
         setSaleIzBaze(data);
         setLoading(false);
       })
@@ -261,7 +282,7 @@ export default function HomePage() {
                     Tip Događaja
                   </label>
                   <div className="max-h-40 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-pink-100">
-                    {TIPOVI_DOGADJAJA.map((t) => (
+                    {tipoviIzBaze.map((t) => (
                       <label
                         key={t.id}
                         className="flex items-center gap-3 cursor-pointer group"
@@ -292,7 +313,7 @@ export default function HomePage() {
                     Karakteristike
                   </label>
                   <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1">
-                    {mock_karakteristike.map((k) => (
+                    {karakteristikeIzBaze.map((k) => (
                       <button
                         key={k.id}
                         type="button"
