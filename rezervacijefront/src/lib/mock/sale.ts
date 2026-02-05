@@ -7,9 +7,8 @@ export const mock_sale: Sala[] = [
         slug: "velika-konferencijska-sala",
         kapacitet: 150,
         lokacija: "Beograd, Vračar",
-        slike:[
-            "/slike/konfverencijskaSala.jpg"
-        ],
+        slike:"/slike/konfverencijskaSala.jpg"
+        ,
         opis: "Moderna sala opremljena najnovijom audio-vizuelnom tehnikom, idealna za velike seminare.",
         karakteristike: [
             { id: 2, naziv: "Projektor" },
@@ -27,9 +26,9 @@ export const mock_sale: Sala[] = [
         slug: "plavi-salon",
         kapacitet: 30,
         lokacija: "Novi Sad, Centar",
-        slike:[
+        slike:
             "/slike/plaviSalon.jpg"
-        ],
+        ,
         opis: "Intiman prostor pogodan za poslovne sastanke i manje radionice.",
         karakteristike: [
             { id: 1, naziv: "Klima uređaj" },
@@ -47,9 +46,9 @@ export const mock_sale: Sala[] = [
         slug: "it-lab-404",
         kapacitet: 30,
         lokacija: "Niš, Medijana",
-        slike:[
+        slike:
             "/slike/ITLab.jpg"
-        ],
+        ,
         opis: "Sala sa računarskom opremom za tehničke obuke.",
         karakteristike: [
             { id: 11, naziv: "Računari" },
@@ -65,9 +64,9 @@ export const mock_sale: Sala[] = [
         slug: "amfiteatar",
         kapacitet: 300,
         lokacija: "Beograd, Novi Beograd",
-        slike:[
+        slike:
             "/slike/amfiteatar.jpg"
-        ],
+        ,
         opis: "Idealan za masovna predavanja, seminare i svečane akademije.",
         karakteristike: [
             { id: 2, naziv: "Projektor" },
@@ -85,9 +84,9 @@ export const mock_sale: Sala[] = [
         slug: "mala-sala-za-sastanke",
         kapacitet: 10,
         lokacija: "Beograd, Voždovac",
-        slike:[
+        slike:
             "/slike/malaSala.jpg"
-        ],
+        ,
         opis: "Tiha sala za brze konsultacije i timske sastanke.",
         karakteristike: [
             { id: 5, naziv: "Brzi internet (Wi-Fi)" },
@@ -103,9 +102,9 @@ export const mock_sale: Sala[] = [
         slug: "laboratorija-za-fiziku",
         kapacitet: 25,
         lokacija: "Novi Sad, Liman",
-        slike:[
+        slike:
             "/slike/fizika.jpg"
-        ],
+        ,
         opis: "Specijalizovana sala sa laboratorijskim stolovima i opremom za eksperimente.",
         karakteristike: [
             { id: 11, naziv: "Računari" },
@@ -121,9 +120,9 @@ export const mock_sale: Sala[] = [
         slug: "sala-mali-princ",
         kapacitet: 80,
         lokacija: "Beograd, Dorćol",
-        slike:[
+        slike:
             "/slike/salamaliprinc.jpg"
-        ],
+        ,
         opis: "Uživajte u prigušenim svetlima i toploj atmosferi našeg prostora, stvorenog za proslave koje se pamte po bliskosti, a ne po gužvi.",
         karakteristike: [
             { id: 1, naziv: "Klima uređaj" },
@@ -141,9 +140,9 @@ export const mock_sale: Sala[] = [
         slug: "coworking-zona",
         kapacitet: 50,
         lokacija: "Beograd, Zemun",
-        slike:[
+        slike:
             "/slike/coworking.jpg"
-        ],
+        ,
         opis: "Otvoren prostor za zajednički rad studenata u opuštenoj atmosferi.",
         karakteristike: [
             { id: 5, naziv: "Brzi internet (Wi-Fi)" },
@@ -161,9 +160,9 @@ export const mock_sale: Sala[] = [
         slug: "sala-za-video-konferencije",
         kapacitet: 15,
         lokacija: "Kragujevac, Bresnica",
-        slike:[
+        slike:
             "/slike/videoKonferencija.jpg"
-        ],
+        ,
         opis: "Specijalizovana sala sa kamerama visoke rezolucije za online sastanke.",
         karakteristike: [
             { id: 8, naziv: "Televizor 4K" },
@@ -181,9 +180,9 @@ export const mock_sale: Sala[] = [
         slug: "svecana-dvorana",
         kapacitet: 200,
         lokacija: "Beograd, Stari grad",
-        slike:[
+        slike:
             "/slike/svecanaDvorana.jpg"
-        ],
+        ,
         opis: "Prostrana dvorana pogodna za proslave i velike prezentacije.",
         karakteristike: [
             { id: 4, naziv: "Ozvučenje" },

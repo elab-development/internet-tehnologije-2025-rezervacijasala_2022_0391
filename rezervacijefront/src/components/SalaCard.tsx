@@ -11,13 +11,23 @@ export default function SalaCard({
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
+  let naslovnaSlika = "/slike/placeholder.jpg";
+  if (sala.slike) {
+    // Ako ima više slika odvojenih zarezom, uzimamo prvu
+    const nizSlika = sala.slike.split(","); 
+    const imeSlike = nizSlika[0];
+    
+    naslovnaSlika = `/slike/${imeSlike}`;
+  }
+
   return (
     <div className="card card-hover flex flex-col h-full overflow-hidden p-0 bg-white">
       {/* SLIKA SA KAPACITETOM */}
       <div className="relative h-60 w-full">
         <img
           //src={sala.slike[0] || "/slike/placeholder.jpg"}
-          src={(sala.slike && sala.slike.length > 0) ? sala.slike[0] : "/slike/placeholder.jpg"}
+          //src={(sala.slike && sala.slike.length > 0) ? sala.slike[0] : "/slike/placeholder.jpg"}
+          src={naslovnaSlika} // Koristimo našu novu putanju
           alt={sala.naziv}
           className="w-full h-full object-cover"
         />
