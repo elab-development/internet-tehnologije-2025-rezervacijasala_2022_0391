@@ -17,7 +17,7 @@ export default function RezervacijaCard({ res }: { res: Rezervacija }) {
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-lg font-bold text-pink-900 dark:text-pink-200">
-              Rezervacija #{res.idRezervacije}
+              Rezervacija #{res.id}
             </h3>
             <p className="text-sm text-pink-700 dark:text-pink-400 opacity-70">
               Sala ID: {res.idSale}

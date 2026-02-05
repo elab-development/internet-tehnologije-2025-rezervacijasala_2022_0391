@@ -26,5 +26,16 @@ class UserSeeder extends Seeder
             'uloga' => 'administrator',
             'banovan' => false,
         ]);
+
+        User::create([
+            'ime'=> 'Nikola',
+            'prezime'=> 'Mitrovic',
+            'email'=> 'nikola@gmail.com',
+            
+            'password' => Hash::make('nikola'),
+            'email_verified_at' => now(),
+            'uloga' => 'ulogovan',
+            'banovan' => false,
+        ]);
     }
 }

@@ -1,44 +1,75 @@
-"use client"; // Ovo mora biti na vrhu da bi filteri radili!
+"use client"; 
 
-import { useState } from "react";
-import { Rezervacija } from "@/lib/types";
+import { useState, useEffect } from "react";
+import { Rezervacija, User } from "@/lib/types";
 import RezervacijaCard from "@/components/RezervacijaCard";
+import Header from "@/components/Header";
+import { api } from "@/lib/api";
 
-
-const sveRezervacije: Rezervacija[] = [
-    { id: 1, pocetak: "2026-02-10T10:00:00", kraj: "2026-02-10T12:00:00", status: "potvrdjena", idKorisnika: 2, idSale: 1, idTipDogadjaja: 2 },
-    { id: 2, pocetak: "2026-02-11T14:00:00", kraj: "2026-02-11T16:00:00", status: "na_cekanju", idKorisnika: 3, idSale: 2, idTipDogadjaja: 1 },
-    { id: 3, pocetak: "2026-02-12T09:00:00", kraj: "2026-02-12T13:00:00", status: "zavrsena", idKorisnika: 5, idSale: 3, idTipDogadjaja: 3 },
-    { id: 4, pocetak: "2026-02-15T10:00:00", kraj: "2026-02-15T18:00:00", status: "otkazana", idKorisnika: 6, idSale: 4, idTipDogadjaja: 6 },
-    { id: 5, pocetak: "2026-02-16T12:00:00", kraj: "2026-02-16T14:00:00", status: "u_toku", idKorisnika: 10, idSale: 5, idTipDogadjaja: 1 },
-    { id: 6, pocetak: "2026-02-17T09:00:00", kraj: "2026-02-17T11:00:00", status: "potvrdjena", idKorisnika: 7, idSale: 6, idTipDogadjaja: 3 },
-    { id: 7, pocetak: "2026-02-20T17:00:00", kraj: "2026-02-20T22:00:00", status: "na_cekanju", idKorisnika: 8, idSale: 7, idTipDogadjaja: 5 },
-    { id: 8, pocetak: "2026-02-21T10:00:00", kraj: "2026-02-21T15:00:00", status: "zavrsena", idKorisnika: 2, idSale: 8, idTipDogadjaja: 7 },
-    { id: 9, pocetak: "2026-02-22T13:00:00", kraj: "2026-02-22T15:00:00", status: "u_toku", idKorisnika: 3, idSale: 9, idTipDogadjaja: 8 },
-    { id: 10, pocetak: "2026-02-25T19:00:00", kraj: "2026-02-25T23:00:00", status: "otkazana", idKorisnika: 5, idSale: 10, idTipDogadjaja: 4 },
-    { id: 11, pocetak: "2026-02-26T10:00:00", kraj: "2026-02-26T12:00:00", status: "potvrdjena", idKorisnika: 1, idSale: 1, idTipDogadjaja: 6 },
-    { id: 12, pocetak: "2026-02-27T08:00:00", kraj: "2026-02-27T10:00:00", status: "na_cekanju", idKorisnika: 10, idSale: 5, idTipDogadjaja: 1 },
-    { id: 13, pocetak: "2026-03-01T15:00:00", kraj: "2026-03-01T17:00:00", status: "zavrsena", idKorisnika: 7, idSale: 2, idTipDogadjaja: 3 },
-    { id: 14, pocetak: "2026-03-02T11:00:00", kraj: "2026-03-02T14:00:00", status: "potvrdjena", idKorisnika: 3, idSale: 4, idTipDogadjaja: 9 },
-    { id: 15, pocetak: "2026-03-05T10:00:00", kraj: "2026-03-05T12:00:00", status: "potvrdjena", idKorisnika: 8, idSale: 9, idTipDogadjaja: 1 }
-];
 
 export default function Home() {
+  const [sveRezervacije, setSveRezervacije] = useState<Rezervacija[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("sve");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("ulogovan_korisnik");
+    if (storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+    }
+    api.getRezervacije() 
+      .then((data) => {
+        setSveRezervacije(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Greška pri učitavanju rezervacija:", err);
+        setLoading(false);
+      });
+  }, []);
 
   // Logika koja filtrira kartice pre nego što se prikažu
-  const prikazaneRezervacije = sveRezervacije.filter((res) => {
+  const filtriranePoUlozi = sveRezervacije.filter((res) => {
+// Ako je admin, vidi sve
+    if (currentUser?.uloga === "administrator") return true;
+    // Ako je običan korisnik, vidi samo one gde se idKorisnika poklapa sa njegovim ID-jem
+    return res.idKorisnika === currentUser?.id;
+  });
+
+  const prikazaneRezervacije = filtriranePoUlozi.filter((res) => {
     if (filter === "sve") return true;
     return res.status === filter;
   });
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-pink-600 font-bold uppercase tracking-widest animate-pulse">
+        Učitavanje rezervacija...
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
+      <Header />
       <div className="max-w-6xl mx-auto">
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
-            Sistem za Rezervacije Sala
-          </h1>
+        {/* --- DINAMIČKI NASLOV --- */}
+        {currentUser?.uloga === "administrator" ? (
+          // Naslov za ADMINA
+          <header className="mb-10 text-center">
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+              Sistem za Rezervacije Sala
+            </h1>
+            <p className="text-gray-500 uppercase tracking-widest text-xs">Administratorski pregled svih zahteva</p>
+          </header>
+        ) : (
+          // Naslov za OBIČNOG KORISNIKA
+          <div className="text-center mb-12 mt-6">
+            <h2 className="text-4xl font-light text-pink-950 uppercase tracking-[0.3em]">
+              Moje <span className="font-bold">Rezervacije</span>
+            </h2>
+            <div className="h-1 w-20 bg-pink-200 mx-auto mt-2 rounded-full"></div>
+          </div>
+        )}
           
           {/* DUGMIĆI ZA FILTRIRANJE */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -56,7 +87,7 @@ export default function Home() {
               </button>
             ))}
           </div>
-        </header>
+        
 
         {/* PRIKAZ FILTRIRANIH KARTICA */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -66,8 +97,12 @@ export default function Home() {
         </div>
 
         {prikazaneRezervacije.length === 0 && (
-          <div className="text-center py-20 text-gray-500">
-            Nema rezervacija sa ovim statusom.
+          <div className="text-center py-32 bg-white rounded-3xl border-2 border-dashed border-pink-100">
+            <p className="text-pink-900/40 text-lg italic">
+              {currentUser?.uloga === "administrator" 
+                ? "Trenutno nema rezervacija u sistemu." 
+                : "Trenutno nemate svojih rezervacija."}
+            </p>
           </div>
         )}
       </div>

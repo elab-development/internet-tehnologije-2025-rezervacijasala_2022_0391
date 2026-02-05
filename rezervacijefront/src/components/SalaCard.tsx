@@ -52,7 +52,7 @@ export default function SalaCard({
           Cena na upit
         </p>
         <Link 
-            href={`/sala/${sala.slug}`}
+            href={`/sale/${sala.id}`}
             className="text-xs font-bold uppercase text-pink-600 hover:text-pink-800 transition-colors border-b border-pink-600"
           >
             Detalji o sali

@@ -31,7 +31,7 @@ class Sala extends Model
         //sala_karakteristika je ime tabele u bazi(znaci nazovi ovako ili promeni ovde nzaiv)
     }
 
-    public function tipoviDogadjaja()
+    public function tipovi_dogadjaja()
     {
         return $this->belongsToMany(TipDogadjaja::class, 'sala_tip_dogadjaja', 'idSale', 'idTipDogadjaja');
         //isto vazi i ovde

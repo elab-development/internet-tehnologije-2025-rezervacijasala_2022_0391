@@ -11,11 +11,20 @@ export const api = {
   // Funkcija za jednu salu po ID-u
   getSalaById: async (id: number) => {
     const res = await fetch(`${BASE_URL}/sale/${id}`);
-    if (!res.ok) throw new Error("Sala nije pronađena");
+    if (!res.ok) {
+        console.error("Laravel Error Status:", res.status);
+        throw new Error("Sala nije pronađena");
+    }
     return res.json();
   },
 
   // Ovde ćemo kasnije dodati login, rezervacije itd.
+  getRezervacije: async () => {
+    const res = await fetch(`${BASE_URL}/rezervacije`);
+    if (!res.ok) throw new Error("Greška pri učitavanju rezervacija");
+    return res.json();
+  },
+
   async login(podaci: { email: string; password: string }) {
   const res = await fetch(`${BASE_URL}/login`, {
     method: "POST",

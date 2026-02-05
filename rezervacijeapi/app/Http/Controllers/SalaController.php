@@ -25,7 +25,7 @@ class SalaController extends Controller
     public function index()
 {
     // Povlačimo sve sale, ali i njihove relacije koje smo definisali u modelu
-    $sale = Sala::with(['tipoviDogadjaja', 'karakteristike'])->get();  //tipoviDogadjaja i karakteristike su metode u modelu Sala, ne tabele!
+    $sale = Sala::with(['tipovi_dogadjaja', 'karakteristike'])->get();  //tipoviDogadjaja i karakteristike su metode u modelu Sala, ne tabele!
     
     return response()->json($sale);
 }
@@ -76,7 +76,12 @@ class SalaController extends Controller
     }
 
     return response()->json($sala);*/
-    $sala = Sala::find($id);
+
+    // VISE NE OVO
+    //$sala = Sala::find($id);
+
+    //NEGO OVO
+    $sala = Sala::with(['karakteristike', 'tipovi_dogadjaja'])->find($id);
 
     if (!$sala) {
         return response()->json(['message' => 'Sala nije pronadjena'], 404);

@@ -1,33 +1,56 @@
-import { mock_sale } from "@/lib/mock/sale";
+"use client";
 
-import { notFound } from "next/navigation";
+import { useState, useEffect, use } from "react";
+import { useParams, notFound } from "next/navigation";
+import { api } from "@/lib/api";
+import { Sala } from "@/lib/types";
 import Link from "next/link";
+import Header from "@/components/Header";
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }
 
-export default async function SalaDetalji({ params }: PageProps) {
-  const { slug } = await params;
+export default  function SalaDetalji({ params }: PageProps) {
+  const resolvedParams = use(params);
+  const id = resolvedParams.id;
 
-  // Tražimo salu pomoću slug-a iz tvog novog mock_sale niza
-  const sala = mock_sale.find(
-  (s) => s.slug.trim().toLowerCase() === slug.trim().toLowerCase());
+  const [sala, setSala] = useState<Sala | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    api.getSalaById(Number(id))
+      .then((data) => {
+        setSala(data);
+        setLoading(false);
+        
+      })
+      .catch((err) => {
+        console.error("Greška pri učitavanju sale:", err);
+        setLoading(false);
+      });
+  }, [id]);
 
-  // Ako neko ukuca loš URL, šaljemo ga na 404
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center text-pink-600 font-bold animate-pulse">
+      Učitavanje detalja...
+    </div>
+  );
   if (!sala) {
     notFound();
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/*HEADER */}
+      <Header />
       {/* Navigacija */}
       <nav className="bg-white border-b px-8 py-4 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <Link href="/" className="text-pink-600 font-bold flex items-center gap-2 hover:translate-x-[-4px] transition-transform">
             ← NAZAD NA SVE SALE
           </Link>
-          <span className="text-gray-400 text-sm">ID Sale: #{sala.idSale}</span>
+          <span className="text-gray-400 text-sm">ID Sale: #{sala.id}</span>
         </div>
       </nav>
 
@@ -38,7 +61,11 @@ export default async function SalaDetalji({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-8">
             <div className="rounded-3xl overflow-hidden shadow-xl bg-gray-200 aspect-video">
               <img 
-                src={sala.slike[0]} 
+                src={
+                  sala.slike && typeof sala.slike === 'string'
+                    ? `/slike/${sala.slike.split(",")[0].trim()}` 
+                    : "/slike/placeholder.jpg"
+                } 
                 alt={sala.naziv} 
                 className="w-full h-full object-cover"
               />
@@ -79,24 +106,32 @@ export default async function SalaDetalji({ params }: PageProps) {
             {/* Karakteristike */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
               <h3 className="text-sm font-bold uppercase text-gray-400 mb-4 tracking-widest">Oprema i Karakteristike</h3>
-              <div className="flex flex-wrap gap-2">
-                {sala.karakteristike.map((k) => (
-                  <span key={k.idKarakteristika} className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                    {k.naziv}
-                  </span>
-                ))}
-              </div>
-            </div>
+             <div className="flex flex-wrap gap-2">
+                {sala.karakteristike && sala.karakteristike.length > 0 ? (
+                sala.karakteristike.map((k) => (
+                <span key={k.id} className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm font-medium">
+                  {k.naziv}
+                </span>
+                    ))
+                    ) : (
+                  <span className="text-gray-400 text-xs italic">Nema dostupne opreme</span>
+                   )}
+                </div>
+          </div>
 
             {/* Tipovi Događaja */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
               <h3 className="text-sm font-bold uppercase text-gray-400 mb-4 tracking-widest">Pogodno za</h3>
               <div className="flex flex-wrap gap-2">
-                {sala.tipoviDogadjaja.map((t) => (
-                  <span key={t.idTipDogadjaja} className="bg-pink-50 text-pink-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                    {t.naziv}
-                  </span>
-                ))}
+                {sala.tipovi_dogadjaja && sala.tipovi_dogadjaja.length > 0 ? (
+                  sala.tipovi_dogadjaja.map((t) => (
+                    <span key={t.id} className="bg-pink-50 text-pink-700 px-3 py-1.5 rounded-full text-sm font-medium">
+                      {t.naziv}
+                    </span>
+                  ))
+              ) : (
+                <span className="text-gray-400 text-xs italic">Nema definisanih tipova događaja</span>
+               )}
               </div>
             </div>
           </div>
