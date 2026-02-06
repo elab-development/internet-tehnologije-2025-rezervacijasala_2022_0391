@@ -107,7 +107,7 @@ export default function Header() {
                   <div className="px-6 py-4 border-b border-pink-50 bg-pink-50/30 text-xs text-pink-900 font-bold uppercase tracking-wider">
                     {currentUser.ime} {currentUser.prezime}
                     <div className="text-[9px] text-pink-400 font-medium lowercase italic mt-1">
-                      role: {currentUser.uloga}
+                      uloga: {currentUser.uloga}
                     </div>
                   </div>
                   <button
@@ -118,12 +118,21 @@ export default function Header() {
                   </button>
                 </>
               ) : (
+                <>
                 <Link
                   href="/login"
                   className="block px-6 py-4 hover:bg-pink-50 font-bold text-pink-900 text-sm transition-colors"
                 >
                   LOGIN
                 </Link>
+                <Link
+                    href="/register"
+                    onClick={() => setShowMenu(false)}
+                    className="block px-6 py-4 hover:bg-pink-50 font-bold text-pink-600 text-sm transition-colors"
+                    >
+                    REGISTER
+                    </Link>
+                </>
               )}
             </div>
           )}

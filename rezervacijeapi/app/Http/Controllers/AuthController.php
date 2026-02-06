@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use SebastianBergmann\FileIterator\Facade;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -20,7 +21,7 @@ class AuthController extends Controller
             'ime' =>'required|string|max:255',
             'prezime'=>'required|string|max:255',
             'email'=>'required|string|email|max:255|unique:users,email',
-            'password'=>'required|string|min:6|confirmed',//password_confirmation
+            'password'=>'required|string|min:6',//|confirmed',//password_confirmation
         ]);
 
         if($validator->fails()){
@@ -36,7 +37,9 @@ class AuthController extends Controller
             'ime'=>$data['ime'],
             'prezime'=>$data['prezime'],
             'email'=>$data['email'],
-            'password'=>$data['password'],
+            //'password'=>$data['password'],
+            'password' => Hash::make($data['password']),
+            'uloga' => 'ulogovan',
         ]);
         # necemo da koristimo token, jer ne zelimo da cim se registrovao bude prijvaljen
         # korisnik prvo treba da verifikuje svojj mejl

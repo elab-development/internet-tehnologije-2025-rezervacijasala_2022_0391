@@ -44,4 +44,26 @@ export const api = {
 
   return res.json(); // Vraća korisnika iz baze
   },
+  
+  register: async (podaci: any) => {
+    const response = await fetch("http://127.0.0.1:8000/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(podaci),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      // Ako Laravel vrati grešku (npr. email zauzet), bacamo je da bi je catch u Reactu uhvatio
+      // result.errors.email[0] izvlači konkretnu poruku iz Larabela
+      const errorMsg = result.errors ? Object.values(result.errors).flat()[0] : result.message;
+      throw new Error(errorMsg || "Greška pri registraciji");
+    }
+
+    return result;
+  },
 };
