@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { Sala } from "@/lib/types";
 import Link from "next/link";
 import Header from "@/components/Header";
+import RezervacijaModal from "@/components/RezervacijaModal";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,6 +27,9 @@ export default  function SalaDetalji({ params }: PageProps) {
 
   const [selectedKarakteristike, setSelectedKarakteristike] = useState<number[]>([]);
   const [selectedTipovi, setSelectedTipovi] = useState<number[]>([]);
+
+  const [isRezervacijaModalOpen, setIsRezervacijaModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   
   useEffect(() => {
 
@@ -48,6 +52,7 @@ export default  function SalaDetalji({ params }: PageProps) {
     if (userJson) {
       const user = JSON.parse(userJson);
       console.log("Pronađen korisnik:", user);
+      setCurrentUser(user); // Čuvamo celog korisnika u state da bismo imali njegov ID za rezervaciju
       if (user.uloga && user.uloga.toLowerCase() === "administrator") {
         console.log("Korisnik je administrator, postavljam isAdmin na true");
         setIsAdmin(true);
@@ -118,6 +123,42 @@ const handleSave = async (e: React.FormEvent) => {
     setLoading(false);
   }
 };
+
+  const formatirajDatumZaLaravel = (date: Date) => {
+  const pad = (n: number) => n < 10 ? '0' + n : n;
+  return date.getFullYear() + '-' +
+    pad(date.getMonth() + 1) + '-' +
+    pad(date.getDate()) + ' ' +
+    pad(date.getHours()) + ':' +
+    pad(date.getMinutes()) + ':' +
+    pad(date.getSeconds());
+};
+
+const handleFinalnaRezervacija = async (data: any) => {
+  if (!currentUser) {
+    alert("Morate biti ulogovani da biste rezervisali.");
+    return;
+  }
+
+  try {
+    const payload = {
+      idKorisnika: currentUser.id,
+      idSale: sala.id,
+      idTipDogadjaja: data.idTipDogadjaja,
+      pocetak: formatirajDatumZaLaravel(data.pocetak),
+      kraj: formatirajDatumZaLaravel(data.kraj),
+      status: 'na_cekanju'
+    };
+
+    await api.createRezervacija(payload);
+    
+    alert("Rezervacija uspešno poslata! Status: Na čekanju.");
+    setIsRezervacijaModalOpen(false);
+  } catch (error: any) {
+    alert(error.message || "Došlo je do greške.");
+  }
+};
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/*HEADER */}
@@ -185,8 +226,10 @@ const handleSave = async (e: React.FormEvent) => {
                 </div>
               </div>
 
-              <button className="w-full mt-8 bg-pink-600 text-white py-4 rounded-2xl font-bold hover:bg-pink-700 transition-colors shadow-lg shadow-pink-200">
-                REZERVIŠI TERMNIN
+              <button
+               onClick={() => setIsRezervacijaModalOpen(true)}
+               className="w-full mt-8 bg-pink-600 text-white py-4 rounded-2xl font-bold hover:bg-pink-700 transition-colors shadow-lg shadow-pink-200">
+                REZERVIŠI TERMIN
               </button>
             </div>
 
@@ -364,8 +407,17 @@ const handleSave = async (e: React.FormEvent) => {
         </div>
       </form>
     </div>
+    
   </div>
 )}
+    {isRezervacijaModalOpen && sala && (
+            <RezervacijaModal 
+              sala={sala} 
+              tipoviDogadjaja={sala.tipovi_dogadjaja} 
+              onClose={() => setIsRezervacijaModalOpen(false)}
+              onConfirm={handleFinalnaRezervacija}
+            />
+          )}
     </div>
   );
 }

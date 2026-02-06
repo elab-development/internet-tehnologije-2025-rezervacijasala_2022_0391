@@ -66,7 +66,7 @@ export const api = {
 
     return result;
   },
-  
+
   otkaziRezervaciju: async (id: number) => {
     const token = localStorage.getItem("token");
     const response = await fetch(`http://127.0.0.1:8000/api/rezervacije/${id}/otkazi`, {
@@ -84,5 +84,28 @@ export const api = {
     }
 
     return response.json();
+  },
+
+  createRezervacija: async (podaci: any) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${BASE_URL}/rezervacije`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, // Neophodno za Sanctum
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(podaci),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      // Ako Laravel validacija baci grešku (npr. termin zauzet), izvlačimo poruku
+      const errorMsg = result.errors ? Object.values(result.errors).flat()[0] : result.message;
+      throw new Error(errorMsg || "Greška pri kreiranju rezervacije");
+    }
+
+    return result;
   },
 };

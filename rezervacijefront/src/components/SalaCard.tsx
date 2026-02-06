@@ -5,9 +5,11 @@ import Link from "next/link"
 export default function SalaCard({
   sala,
   isKorisnik,
+  onRezervisi,
 }: {
   sala: Sala;
   isKorisnik: boolean;
+  onRezervisi: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -61,7 +63,9 @@ export default function SalaCard({
         <div className="mt-auto space-y-2">
           {/* DUGME REZERVIŠI (samo za ulogovane korisnike) */}
           {isKorisnik && (
-            <button className="w-full bg-pink-600 text-white py-3 font-bold uppercase hover:bg-pink-700 transition-all">
+            <button 
+            onClick={onRezervisi} 
+            className="w-full bg-pink-600 text-white py-3 font-bold uppercase hover:bg-pink-700 transition-all">
               Rezerviši salu
             </button>
           )}

@@ -19,6 +19,21 @@ class RezervacijaFactory extends Factory
      */
     public function definition(): array
     {
+                
+            $pocetak = fake()->dateTimeBetween('-1 month', '+1 month');
+            $kraj = (clone $pocetak)->modify('+' . rand(2, 8) . ' hours');
+            $now = now(); // Trenutno vreme
+            
+            if ($kraj < $now) {
+                // Ako je termin već prošao
+                $status = fake()->randomElement(['zavrsena', 'otkazana']);
+            } elseif ($pocetak <= $now && $kraj >= $now) {
+                // Ako je termin trenutno u toku
+                $status = 'u_toku';
+            } else {
+                // Ako je termin u budućnosti
+                $status = fake()->randomElement(['na_cekanju', 'potvrdjena', 'otkazana']);
+            }
            // $korisnici = User::all()->pluck('id')->toArray();
             return [
             //'idKorisnika'=> $this->faker->randomElement($korisnici),
@@ -26,9 +41,9 @@ class RezervacijaFactory extends Factory
             'idSale' => Sala::inRandomOrder()->first()?->id ?? Sala::factory(),
             'idTipDogadjaja' => TipDogadjaja::inRandomOrder()->first()?->id ?? TipDogadjaja::factory(),
             
-            'pocetak' => fake()->dateTimeBetween('-2 months', '+1 month'),
-            'kraj' => fake()->dateTimeBetween('+1 month', '+2 months'),
-            'status' => fake()->randomElement(['otkazana', 'u_toku', 'zavrsena', 'potvrdjena', 'na_cekanju']),
+            'pocetak' => $pocetak,
+            'kraj' => $kraj,
+            'status' => $status,
             
         ];
     }

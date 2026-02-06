@@ -9,6 +9,7 @@ import { Instagram, Facebook, Youtube, Phone, Search } from "lucide-react";
 import { User, Sala, TipDogadjaja } from "@/lib/types";
 import { mock_karakteristike } from "@/lib/mock/karakteristike";
 import Header from "../components/Header";
+import RezervacijaModal from "@/components/RezervacijaModal";
 
 /*
 const TIPOVI_DOGADJAJA = [
@@ -41,9 +42,9 @@ export default function HomePage() {
   const [showMenu, setShowMenu] = useState(false);
   const [sortOrder, setSortOrder] = useState("default");
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [selectedSala, setSelectedSala] = useState<Sala | null>(null);
 
-  //novo
-  // DINAMIČKO IZVLAČENJE TIPOVA IZ PODATAKA KOJI SU STIGLI IZ BAZE
+ 
   // Koristimo Map da bismo dobili samo jedinstvene objekte (da se ne ponavljaju)
   const tipoviIzBaze = Array.from(
     new Map(
@@ -66,7 +67,7 @@ export default function HomePage() {
     const storedUser = localStorage.getItem("ulogovan_korisnik");
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      console.log("Korisnik iz baze:", parsed); // OVO DODAJ
+      console.log("Korisnik iz baze:", parsed); 
       setCurrentUser(parsed);
       // setCurrentUser(JSON.parse(storedUser)); ove tri linije iznad nove
     }
@@ -102,6 +103,54 @@ export default function HomePage() {
     setShowMenu(false);
     window.location.reload(); // Osvežava stranu da se dugmići "sakriju"
   };
+  const formatirajDatumZaLaravel = (date: Date) => {
+  const pad = (n: number) => n < 10 ? '0' + n : n;
+  return date.getFullYear() + '-' +
+    pad(date.getMonth() + 1) + '-' +
+    pad(date.getDate()) + ' ' +
+    pad(date.getHours()) + ':' +
+    pad(date.getMinutes()) + ':' +
+    pad(date.getSeconds());
+};
+  const handleFinalnaRezervacija = async (data: any) => {
+     if (!currentUser) {
+       alert("Morate biti ulogovani da biste rezervisali.");
+       return;
+     }
+
+     try {
+       // Laravel često traži datum u formatu "YYYY-MM-DD HH:mm:ss"
+       // toISOString() šalje format "2026-02-06T12:00:00.000Z"
+       // Ako Laravel izbaci grešku, ovde ćemo formatirati malo drugačije
+       const payload = {
+         //idKorisnika: currentUser.id,
+         //idSale: data.idSale,
+         //idTipDogadjaja: data.idTipDogadjaja,
+         idKorisnika: Number(currentUser.id), // Pretvaramo u broj
+         idSale: Number(data.idSale),         // Pretvaramo u broj
+         idTipDogadjaja: Number(data.idTipDogadjaja), // Pretvaramo u broj
+         //pocetak: data.pocetak.toISOString(), 
+         //kraj: data.kraj.toISOString(),
+         // Zamenjujemo 'T' razmakom i sklanjamo milisekunde/Z
+         pocetak: formatirajDatumZaLaravel(data.pocetak),
+          kraj: formatirajDatumZaLaravel(data.kraj),
+          //pocetak: data.pocetak.toISOString().replace('T', ' ').substring(0, 19),
+          //kraj: data.kraj.toISOString().replace('T', ' ').substring(0, 19),
+         status: 'na_cekanju'
+       };
+
+       await api.createRezervacija(payload);
+       
+       alert("Rezervacija uspešno poslata!");
+       setSelectedSala(null); // Ovo zatvara modal
+     } catch (error: any) {
+       /*console.error("Detalji greške:", error);
+       alert(error.message || "Došlo je do greške.");*/
+       console.log("Rezervacija odbijena:", error.message);
+      alert(error.message);
+     }
+  };
+
 
   // LOGIKA FILTRIRANJA
   // pre iz mocka
@@ -336,6 +385,7 @@ export default function HomePage() {
               // Ovde menjamo: biće true samo ako je uloga "ulogovan"
               // i admin moze da vidi sale pa dodajemo i za njega dozvolu || currentUser?.uloga === "administrator"
               isKorisnik={currentUser?.uloga === "ulogovan" || currentUser?.uloga === "administrator"}
+              onRezervisi={() => setSelectedSala(sala)}
             />
           ))}
         </div>
@@ -346,6 +396,14 @@ export default function HomePage() {
               Nema sala koje odgovaraju vašim kriterijumima.
             </p>
           </div>
+        )}
+        {selectedSala && (
+          <RezervacijaModal 
+            sala={selectedSala} 
+            tipoviDogadjaja={selectedSala.tipovi_dogadjaja} 
+            onClose={() => setSelectedSala(null)}
+            onConfirm={handleFinalnaRezervacija}
+          />
         )}
       </div>
     </main>

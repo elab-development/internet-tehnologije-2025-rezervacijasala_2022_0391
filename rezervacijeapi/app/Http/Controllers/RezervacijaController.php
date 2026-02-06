@@ -36,13 +36,25 @@ class RezervacijaController extends Controller
             'idTipDogadjaja' => 'required|exists:tipovidogadjaja,id',
             'pocetak' => 'required|date|after:now',
             'kraj' => 'required|date|after:pocetak',
-            'status' => 'required|string|in:otkazana, u_toku, zavrsena, potvrdjena, na_cekanju' // npr. 'rezervisano', 'otkazano'
+            'status' => 'required|string|in:otkazana, u_toku, zavrsena, potvrdjena,na_cekanju' // npr. 'rezervisano', 'otkazano'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+                // provera preklapanja
+            $preklapanje = Rezervacija::where('idSale', $request->idSale)
+                ->where('status', '!=', 'otkazana') // Ignorišemo otkazane
+                ->where(function ($query) use ($request) {
+                    $query->where('pocetak', '<', $request->kraj)
+                        ->where('kraj', '>', $request->pocetak);
+                })->exists();
 
+            if ($preklapanje) {
+                return response()->json([
+                    'message' => 'Izabrani termin je već zauzet. Molimo odaberite drugo vreme.'
+                ], 409); 
+            }
         $rezervacija = Rezervacija::create($request->all());
 
         return response()->json([
@@ -138,5 +150,22 @@ class RezervacijaController extends Controller
         'message' => 'Rezervacija uspešno otkazana',
         'rezervacija' => $rezervacija
     ]);
+}
+    public function proveriDostupnost(Request $request)
+{
+    $request->validate([
+        'idSale' => 'required|exists:sale,id',
+        'pocetak' => 'required|date',
+        'kraj' => 'required|date|after:pocetak',
+    ]);
+
+    $preklapanje = Rezervacija::where('idSale', $request->idSale)
+        ->where('status', '!=', 'otkazana')
+        ->where(function ($query) use ($request) {
+            $query->where('pocetak', '<', $request->kraj)
+                  ->where('kraj', '>', $request->pocetak);
+        })->exists();
+
+    return response()->json(['slobodno' => !$preklapanje]);
 }
 }
