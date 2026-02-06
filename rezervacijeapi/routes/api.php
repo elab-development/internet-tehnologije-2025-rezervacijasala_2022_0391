@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('users/{user_id}', [UserController::class,'destroy']);//za brisanje naloga
 
     Route::post('/sale', [SalaController::class, 'store']);//da administrator doda novu salu
+    Route::put('/sale/{id}', [SalaController::class, 'update']);
     Route::delete('/sale/{id}', [SalaController::class, 'destroy']);
 
     Route::post('/tipovidogadjaja', [TipDogadjajaController::class, 'store']);

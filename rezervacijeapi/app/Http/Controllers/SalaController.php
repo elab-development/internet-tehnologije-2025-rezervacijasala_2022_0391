@@ -101,9 +101,28 @@ class SalaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sala $sala)
+    public function update(Request $request, $id)
     {
-        //
+        $sala = Sala::find($id);
+
+         if (!$sala) {
+            return response()->json(['message' => 'Sala nije pronađena'], 404);
+        }
+
+        $sala->update($request->only(['naziv', 'opis', 'kapacitet', 'lokacija', 'slike']));
+ 
+        if ($request->has('karakteristike')) {
+            $sala->karakteristike()->sync($request->input('karakteristike'));
+        }
+
+        if ($request->has('tipovi_dogadjaja')) {
+            $sala->tipovi_dogadjaja()->sync($request->input('tipovi_dogadjaja'));
+        }
+
+        return response()->json([
+            'message' => 'Sala uspešno ažurirana!',
+            'data' => $sala->load(['karakteristike', 'tipovi_dogadjaja'])
+        ]);
     }
 
     /**

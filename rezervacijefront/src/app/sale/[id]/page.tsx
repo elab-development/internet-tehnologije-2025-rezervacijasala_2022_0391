@@ -17,11 +17,23 @@ export default  function SalaDetalji({ params }: PageProps) {
 
   const [sala, setSala] = useState<Sala | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [sveKarakteristike, setSveKarakteristike] = useState<any[]>([]);
+  const [sviTipovi, setSviTipovi] = useState<any[]>([]);
+
+  const [selectedKarakteristike, setSelectedKarakteristike] = useState<number[]>([]);
+  const [selectedTipovi, setSelectedTipovi] = useState<number[]>([]);
   
   useEffect(() => {
+
     api.getSalaById(Number(id))
       .then((data) => {
         setSala(data);
+        setSelectedKarakteristike(data.karakteristike?.map((k: any) => k.id) || []);
+        setSelectedTipovi(data.tipovi_dogadjaja?.map((t: any) => t.id) || []);
         setLoading(false);
         
       })
@@ -29,6 +41,18 @@ export default  function SalaDetalji({ params }: PageProps) {
         console.error("Greška pri učitavanju sale:", err);
         setLoading(false);
       });
+      //novo
+      fetch("http://127.0.0.1:8000/api/karakteristike").then(res => res.json()).then(setSveKarakteristike).catch(err => console.error("Greška karakteristike:", err));
+      fetch("http://127.0.0.1:8000/api/tipovidogadjaja").then(res => res.json()).then(setSviTipovi).catch(err => console.error("Greška tipovi:", err));
+      const userJson = localStorage.getItem("user");
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      console.log("Pronađen korisnik:", user);
+      if (user.uloga && user.uloga.toLowerCase() === "administrator") {
+        console.log("Korisnik je administrator, postavljam isAdmin na true");
+        setIsAdmin(true);
+      }
+    }
   }, [id]);
 
   if (loading) return (
@@ -39,7 +63,61 @@ export default  function SalaDetalji({ params }: PageProps) {
   if (!sala) {
     notFound();
   }
+const handleSave = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
+  // Sakupljamo podatke
+  const target = e.target as any;
+  const formElements = e.currentTarget as HTMLFormElement;
+  /*
+  const updatedData = {
+    naziv: target[0].value,
+    kapacitet: target[1].value,
+    lokacija: target[2].value,
+    opis: target[3].value,
+    karakteristike: selectedKarakteristike, 
+    tipovi_dogadjaja: selectedTipovi,      
+  };*/
+  const updatedData = {
+    naziv: (formElements[0] as HTMLInputElement).value,
+    kapacitet: (formElements[1] as HTMLInputElement).value,
+    lokacija: (formElements[2] as HTMLInputElement).value,
+    opis: (formElements[3] as HTMLTextAreaElement).value,
+    slike: sala?.slike, // Zadržavamo trenutne slike
+    karakteristike: selectedKarakteristike, 
+    tipovi_dogadjaja: selectedTipovi,      
+  };
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://127.0.0.1:8000/api/sale/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`, //token za proveru admina
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.ok) {
+      const novaSala = await response.json();
+      setSala(novaSala.data || novaSala); // osvezavanje prikaz na stranici
+      setIsEditModalOpen(false); 
+      alert("Uspešno sačuvano!");
+    } else {
+      const errorData = await response.json();
+      alert("Greška pri čuvanju: " + (errorData.message || "Proverite podatke."));
+    }
+  } catch (error) {
+    console.error("Greška:", error);
+    alert("Serverska greška.");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-gray-50">
       {/*HEADER */}
@@ -76,6 +154,15 @@ export default  function SalaDetalji({ params }: PageProps) {
                 {sala.naziv}
               </h1>
               <p className="text-xl text-gray-600 mb-6 italic">📍 {sala.lokacija}</p>
+           
+              {isAdmin && (
+                  <button 
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2"
+                  >
+                    <span>⚙️</span> IZMENI
+                  </button>
+                )}
               <hr className="mb-6" />
               <p className="text-gray-700 text-lg leading-relaxed">
                 {sala.opis}
@@ -138,6 +225,147 @@ export default  function SalaDetalji({ params }: PageProps) {
 
         </div>
       </main>
+
+      {/*  MODAL KOMPONENTA */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+    <div className="bg-white rounded-[40px] w-full max-w-2xl max-h-[90vh] overflow-y-auto p-10 shadow-2xl relative">
+      
+      {/* Dugme za zatvaranje */}
+      <button 
+        onClick={() => setIsEditModalOpen(false)}
+        className="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors"
+      >
+        <span className="text-3xl">×</span>
+      </button>
+
+      <div className="mb-8">
+        <h2 className="text-3xl font-black uppercase tracking-tight text-gray-900">
+          Uredi detalje sale
+        </h2>
+        <p className="text-gray-500 font-medium">Sve izmene će biti odmah vidljive na sajtu.</p>
+      </div>
+
+      <form className="space-y-6" onSubmit={handleSave}>
+        {/* Naziv */}
+        <div>
+          <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-1">Naziv sale</label>
+          <input 
+            type="text" 
+            defaultValue={sala.naziv} 
+            className="w-full bg-gray-50 border-2 border-transparent focus:border-pink-500 focus:bg-white rounded-2xl p-4 outline-none transition-all font-semibold"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Kapacitet */}
+          <div>
+            <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-1">Kapacitet (broj osoba)</label>
+            <input 
+              type="number" 
+              defaultValue={sala.kapacitet} 
+              className="w-full bg-gray-50 border-2 border-transparent focus:border-pink-500 focus:bg-white rounded-2xl p-4 outline-none transition-all font-semibold"
+            />
+          </div>
+          {/* Lokacija */}
+          <div>
+            <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-1">Lokacija</label>
+            <input 
+              type="text" 
+              defaultValue={sala.lokacija} 
+              className="w-full bg-gray-50 border-2 border-transparent focus:border-pink-500 focus:bg-white rounded-2xl p-4 outline-none transition-all font-semibold"
+            />
+          </div>
+        </div>
+
+        {/* Opis */}
+        <div>
+          <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-1">Opis sale</label>
+          <textarea 
+            rows={5} 
+            defaultValue={sala.opis} 
+            className="w-full bg-gray-50 border-2 border-transparent focus:border-pink-500 focus:bg-white rounded-2xl p-4 outline-none transition-all font-semibold resize-none"
+          />
+        </div>
+        {/* KARAKTERISTIKE */}
+        <div className="space-y-4">
+          <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-1 italic">
+            Oprema i karakteristike
+          </label>
+          <div className="grid grid-cols-2 gap-3 bg-gray-50 p-6 rounded-[25px] border border-gray-100">
+            {sveKarakteristike.map((k) => (
+              <label key={k.id} className="flex items-center gap-3 cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  checked={selectedKarakteristike.includes(k.id)}
+                  onChange={() => {
+                    setSelectedKarakteristike(prev => 
+                      prev.includes(k.id) ? prev.filter(id => id !== k.id) : [...prev, k.id]
+                    );
+                  }}
+                  className="w-5 h-5 rounded-lg border-gray-300 text-pink-600 focus:ring-pink-500 transition-all"
+                />
+                <span className="text-sm font-semibold text-gray-700 group-hover:text-pink-600 transition-colors">
+                  {k.naziv}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* TIPOVI DOGAĐAJA */}
+        <div className="space-y-4 mt-6">
+          <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-1 italic">
+            Pogodno za događaje
+          </label>
+          <div className="flex flex-wrap gap-3">
+            {sviTipovi.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  setSelectedTipovi(prev => 
+                    prev.includes(t.id) ? prev.filter(id => id !== t.id) : [...prev, t.id]
+                  );
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border-2 ${
+                  selectedTipovi.includes(t.id) 
+                    ? "border-pink-600 bg-pink-600 text-white shadow-md shadow-pink-200" 
+                    : "border-gray-100 bg-white text-gray-400 hover:border-pink-200"
+                }`}
+              >
+                {t.naziv}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Dugmad */}
+        <div className="flex gap-4 pt-4">
+          <button 
+            type="button"
+            onClick={() => setIsEditModalOpen(false)}
+            className="flex-1 bg-gray-100 text-gray-600 py-4 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+          >
+            OTKAŽI
+          </button>
+          <button 
+            type="submit"
+            disabled={loading}
+            className="flex-1 bg-pink-600 text-white py-4 rounded-2xl font-bold hover:bg-pink-700 transition-all shadow-lg shadow-pink-200"
+           /*
+            onClick={(e) => {
+                e.preventDefault();
+                alert("Ovde ćemo pozvati Laravel update!");
+            }} */
+          >
+            {loading ? "ČUVANJE..." : "SAČUVAJ IZMENE"}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 }

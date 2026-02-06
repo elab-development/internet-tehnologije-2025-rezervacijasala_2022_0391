@@ -39,7 +39,8 @@ export default function LoginStranica() {
        // lozinka: password,
     });
     console.log("Šta je stiglo iz baze:", korisnik);
-    localStorage.setItem("ulogovan_korisnik", JSON.stringify(korisnik.user));
+    localStorage.setItem("user", JSON.stringify(korisnik.user));
+    localStorage.setItem("ulogovan_korisnik", JSON.stringify(korisnik.user)); //znog headera, da ne pise opet login iako sam se ulogovala
     localStorage.setItem("token", korisnik.token);
     
       if (korisnik.user.banovan) {
