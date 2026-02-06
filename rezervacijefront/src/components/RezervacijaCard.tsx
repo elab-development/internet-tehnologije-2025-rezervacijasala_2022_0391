@@ -1,6 +1,12 @@
 import { Rezervacija } from "@/lib/types";
 
-export default function RezervacijaCard({ res }: { res: Rezervacija }) {
+export default function RezervacijaCard({ 
+  res, 
+  onOtkazi 
+}: { 
+  res: Rezervacija; 
+  onOtkazi: (id: number) => void; 
+}) {
   // Boje za bedževe (statusi)
   const statusColor = {
     potvrdjena: "bg-green-100 text-green-800",
@@ -46,9 +52,11 @@ export default function RezervacijaCard({ res }: { res: Rezervacija }) {
           Detalji
         </button>
         
-        {/* Dugme OTKAŽI sa efektom koji si tražila */}
+        {/* Dugme OTKAŽI */}
         {(res.status === 'na_cekanju' || res.status === 'potvrdjena') && (
-          <button className="px-4 py-2.5 border-2 border-pink-200 text-pink-700 rounded-xl 
+          <button 
+          onClick={() => onOtkazi(res.id)}
+          className="px-4 py-2.5 border-2 border-pink-200 text-pink-700 rounded-xl 
                              transition-all duration-300 ease-in-out
                              hover:bg-red-500 hover:border-red-500 hover:text-white 
                              text-sm font-medium">

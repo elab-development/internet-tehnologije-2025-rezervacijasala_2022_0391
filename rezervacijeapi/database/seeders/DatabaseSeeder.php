@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
          $this->call([
             UserSeeder::class,
          ]);
-         User::factory(15)->create();
+         User::factory()->create();
          //$sviTipovi=TipDogadjaja::factory(9)->create();
          $konferencija = TipDogadjaja::create(['naziv' => 'Konferencija']);
          $seminar = TipDogadjaja::create(['naziv' => 'Seminar']);
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
              $sveKarakteristike->random($brojKarakteristika)
             );
             if ($sala->naziv === 'Velika Konferencijska Sala') {
-                $sala->tipoviDogadjaja()->attach([
+                $sala->tipovi_dogadjaja()->attach([
                 $konferencija->id, 
                 $sastanak->id, 
                 $radionica->id,
@@ -71,48 +71,48 @@ class DatabaseSeeder extends Seeder
                 $seminar->id
         ]);
     } else if($sala->naziv === 'Plavi Salon') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $sastanak->id, 
                 $radionica->id,
                 $teambuilding->id
         ]);
     } else if($sala->naziv === 'IT Lab 404') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $sastanak->id, 
                 $radionica->id,
                 
         ]);
     } else if($sala->naziv === 'Amfiteatar') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $konferencija->id, 
                 $seminar->id,
                 $kulturnidogadjaj->id
         ]);
     } else if($sala->naziv === 'Mala sala za sastanke') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $sastanak->id, 
                 $radionica->id,
                 
         ]);
     } else if($sala->naziv === 'Laboratorija za fiziku') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                  
                 $radionica->id,
                 
         ]);
     } else if($sala->naziv === 'Sala Mali Princ') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $rodjendan->id, 
                 $vencanje->id,
                 
         ]);
     } else if($sala->naziv === 'Coworking zona') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 $seminar->id,
                 $sastanak->id, 
                 $radionica->id,
@@ -120,14 +120,14 @@ class DatabaseSeeder extends Seeder
 
         ]);
     } else if($sala->naziv === 'Sala za video konferencije') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $sastanak->id, 
                 $radionica->id,
                 $teambuilding->id
         ]);
     } else if($sala->naziv === 'Svečana dvorana') {
-        $sala->tipoviDogadjaja()->attach([
+        $sala->tipovi_dogadjaja()->attach([
                 
                 $vencanje->id, 
                 $kulturnidogadjaj->id,

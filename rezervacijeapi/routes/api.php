@@ -52,5 +52,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/rezervacije', [RezervacijaController::class, 'store']);
     Route::put('/rezervacije/{id}', [RezervacijaController::class, 'update']);
-Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy']);
+    Route::put('/rezervacije/{id}/otkazi', [RezervacijaController::class, 'otkazi']);
+    Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy']);
 });

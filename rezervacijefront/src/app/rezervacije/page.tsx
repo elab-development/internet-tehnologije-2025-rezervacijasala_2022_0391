@@ -28,6 +28,23 @@ export default function Home() {
       });
   }, []);
 
+  const handleOtkazi = async (id: number) => {
+    if (!confirm("Da li ste sigurni da želite da otkažete ovu rezervaciju?")) return;
+
+    try {
+      await api.otkaziRezervaciju(id);
+
+      setSveRezervacije((prev) =>
+        prev.map((res) =>
+          res.id === id ? { ...res, status: "otkazana" } : res
+        )
+      );
+      alert("Rezervacija je uspešno otkazana.");
+    } catch (error: any) {
+      alert("Greška: " + error.message);
+    }
+  };
+
   // Logika koja filtrira kartice pre nego što se prikažu
   const filtriranePoUlozi = sveRezervacije.filter((res) => {
 // Ako je admin, vidi sve
@@ -92,7 +109,10 @@ export default function Home() {
         {/* PRIKAZ FILTRIRANIH KARTICA */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {prikazaneRezervacije.map((res) => (
-            <RezervacijaCard key={res.id} res={res} />
+            <RezervacijaCard key={res.id}
+             res={res} 
+             onOtkazi={handleOtkazi}
+             />
           ))}
         </div>
 

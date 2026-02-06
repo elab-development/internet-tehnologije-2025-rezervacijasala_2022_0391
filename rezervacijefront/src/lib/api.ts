@@ -44,7 +44,7 @@ export const api = {
 
   return res.json(); // Vraća korisnika iz baze
   },
-  
+
   register: async (podaci: any) => {
     const response = await fetch("http://127.0.0.1:8000/api/register", {
       method: "POST",
@@ -65,5 +65,24 @@ export const api = {
     }
 
     return result;
+  },
+  
+  otkaziRezervaciju: async (id: number) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://127.0.0.1:8000/api/rezervacije/${id}/otkazi`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Greška pri otkazivanju");
+    }
+
+    return response.json();
   },
 };

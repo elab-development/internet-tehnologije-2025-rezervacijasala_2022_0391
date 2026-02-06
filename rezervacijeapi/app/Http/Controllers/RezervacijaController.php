@@ -117,4 +117,26 @@ class RezervacijaController extends Controller
 
     return response()->json(['message' => 'Rezervacija je uspešno otkazana/obrisana']);
     }
+
+    public function otkazi(Request $request,$id)
+{
+    $rezervacija = Rezervacija::findOrFail($id);
+    $user = $request->user();
+    if (!$user) {
+        return response()->json(['message' => 'Niste autorizovani'], 401);
+    }
+    
+    // Proveri da li rezervacija pripada ulogovanom korisniku
+    if ($rezervacija->idKorisnika !== $user->id && $user->uloga !== 'administrator') {
+        return response()->json(['message' => 'Nemate ovlašćenje za ovu akciju'], 403);
+    }
+
+    $rezervacija->status = 'otkazana';
+    $rezervacija->save();
+
+    return response()->json([
+        'message' => 'Rezervacija uspešno otkazana',
+        'rezervacija' => $rezervacija
+    ]);
+}
 }
