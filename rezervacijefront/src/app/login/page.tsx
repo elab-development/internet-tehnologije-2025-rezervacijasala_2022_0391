@@ -97,7 +97,7 @@ export default function LoginStranica() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full p-4 rounded-2xl border-2 border-pink-50 focus:border-pink-500 focus:outline-none transition-all outline-none text-gray-800"
-              placeholder="admin@primer.com"
+              placeholder="primer@primer.com"
             />
           </div>
           

@@ -224,10 +224,7 @@ const handleFinalnaRezervacija = async (data: any) => {
                   <span className="text-gray-500">Kapacitet</span>
                   <span className="font-bold text-gray-900">{sala.kapacitet} osoba</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Status</span>
-                  <span className="text-green-500 font-bold text-sm uppercase">Dostupno</span>
-                </div>
+                
               </div>
 
               {!isAdmin ? (
