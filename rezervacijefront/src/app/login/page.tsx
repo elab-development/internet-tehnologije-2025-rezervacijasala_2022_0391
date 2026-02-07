@@ -79,7 +79,7 @@ export default function LoginStranica() {
     <main className="min-h-screen bg-pink-50 flex items-center justify-center p-6 font-sans">
       <div className="bg-white p-10 rounded-[30px] shadow-2xl shadow-pink-200 w-full max-w-md border border-pink-100">
         <h1 className="text-4xl font-black text-pink-900 mb-2 text-center tracking-tight">Prijava</h1>
-        <p className="text-pink-600 mb-8 text-center font-medium opacity-70">Admin pristup sistemu</p>
+        {/*<p className="text-pink-600 mb-8 text-center font-medium opacity-70">Admin pristup sistemu</p>/*}
         
         {/* PORUKA O GREŠCI */}
         {error && (

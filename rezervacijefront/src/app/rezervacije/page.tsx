@@ -69,7 +69,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 p-8">
       <Header />
       <div className="max-w-6xl mx-auto">
-        {/* --- DINAMIČKI NASLOV --- */}
+       
         {currentUser?.uloga === "administrator" ? (
           // Naslov za ADMINA
           <header className="mb-10 text-center">

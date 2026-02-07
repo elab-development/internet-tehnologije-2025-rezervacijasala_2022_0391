@@ -57,6 +57,10 @@ export default  function SalaDetalji({ params }: PageProps) {
         console.log("Korisnik je administrator, postavljam isAdmin na true");
         setIsAdmin(true);
       }
+    } else{
+      // Ako nema korisnika u localStorage, isprazni state
+      setCurrentUser(null);
+      setIsAdmin(false);
     }
   }, [id]);
 
@@ -226,11 +230,26 @@ const handleFinalnaRezervacija = async (data: any) => {
                 </div>
               </div>
 
+              {!isAdmin ? (
               <button
-               onClick={() => setIsRezervacijaModalOpen(true)}
+               /*onClick={() => setIsRezervacijaModalOpen(true)}*/
+                onClick={() => {
+                  if (!currentUser) {
+                    alert("Morate biti ulogovani da biste rezervisali termin!");
+                    
+                    return;
+                  }
+                  setIsRezervacijaModalOpen(true);
+                }}
                className="w-full mt-8 bg-pink-600 text-white py-4 rounded-2xl font-bold hover:bg-pink-700 transition-colors shadow-lg shadow-pink-200">
                 REZERVIŠI TERMIN
               </button>
+              ) : (
+                <div className="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-2xl text-blue-700 text-sm font-medium text-center">
+                  Prijavljeni ste kao administrator. <br/> 
+                  <span className="text-xs opacity-75 italic">Rezervacije su onemogućene za ovaj nalog.</span>
+                </div>
+              )}
             </div>
 
             {/* Karakteristike */}

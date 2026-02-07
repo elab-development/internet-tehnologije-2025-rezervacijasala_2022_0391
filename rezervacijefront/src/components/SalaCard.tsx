@@ -13,6 +13,10 @@ export default function SalaCard({
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
+  const userJson = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+  const currentUser = userJson ? JSON.parse(userJson) : null;
+  const isAdmin = currentUser?.uloga?.toLowerCase() === "administrator";
+
   let naslovnaSlika = "/slike/placeholder.jpg";
   if (sala.slike) {
     // Ako ima više slika odvojenih zarezom, uzimamo prvu
@@ -62,7 +66,7 @@ export default function SalaCard({
           </div>
         <div className="mt-auto space-y-2">
           {/* DUGME REZERVIŠI (samo za ulogovane korisnike) */}
-          {isKorisnik && (
+          {isKorisnik && !isAdmin && (
             <button 
             onClick={onRezervisi} 
             className="w-full bg-pink-600 text-white py-3 font-bold uppercase hover:bg-pink-700 transition-all">

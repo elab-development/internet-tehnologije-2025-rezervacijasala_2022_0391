@@ -19,7 +19,10 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("ulogovan_korisnik");
+   /* localStorage.removeItem("ulogovan_korisnik");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");*/
+    localStorage.clear();
     setCurrentUser(null);
     setShowMenu(false);
     // Ako smo na stranici za rezervacije, moramo se vratiti na home jer nismo više ulogovani
