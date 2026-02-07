@@ -15,17 +15,12 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-
-
-
 Route::get('sale',[SalaController::class,'index']);//da korisnici vide sta iznajmljuju
 Route::get('sale/{id}', [SalaController::class,'show']);
 
 Route::get('/tipovidogadjaja', [TipDogadjajaController::class, 'index']);
 
-
 Route::get('/karakteristike', [KarakteristikaController::class, 'index']);
-
 
 Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 
