@@ -19,11 +19,17 @@ export const api = {
   },
 
   // Ovde ćemo kasnije dodati login, rezervacije itd.
-  getRezervacije: async () => {
-    const res = await fetch(`${BASE_URL}/rezervacije`);
-    if (!res.ok) throw new Error("Greška pri učitavanju rezervacija");
-    return res.json();
-  },
+getRezervacije: async () => {
+  const token = localStorage.getItem("token"); // Uzimamo token
+  const res = await fetch(`${BASE_URL}/rezervacije`, {
+    headers: {
+      "Authorization": `Bearer ${token}`, // Dodajemo ga u zaglavlje
+      "Accept": "application/json",
+    },
+  });
+  if (!res.ok) throw new Error("Greška pri učitavanju rezervacija");
+  return res.json();
+},
 
   async login(podaci: { email: string; password: string }) {
   const res = await fetch(`${BASE_URL}/login`, {

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('users', [UserController::class,'index']);//za izlistavanje svih korisnika
+
 
 
 Route::get('sale',[SalaController::class,'index']);//da korisnici vide sta iznajmljuju
@@ -26,8 +26,6 @@ Route::get('/tipovidogadjaja', [TipDogadjajaController::class, 'index']);
 
 Route::get('/karakteristike', [KarakteristikaController::class, 'index']);
 
-Route::get('/rezervacije', [RezervacijaController::class, 'index']);
-Route::get('/rezervacije/{id}', [RezervacijaController::class, 'show']);
 
 Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 
@@ -39,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::delete('users/{user_id}', [UserController::class,'destroy']);//za brisanje naloga
+    Route::get('users', [UserController::class,'index']);//za izlistavanje svih korisnika
 
     Route::post('/sale', [SalaController::class, 'store']);//da administrator doda novu salu
     Route::put('/sale/{id}', [SalaController::class, 'update']);
@@ -50,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/karakteristike', [KarakteristikaController::class, 'store']);
     Route::delete('/karakteristike/{id}', [KarakteristikaController::class, 'destroy']);//administrator moze da obrise neku karakteristiku
 
+    Route::get('/rezervacije', [RezervacijaController::class, 'index']);
+    Route::get('/rezervacije/{id}', [RezervacijaController::class, 'show']);
     Route::post('/rezervacije', [RezervacijaController::class, 'store']);
     Route::put('/rezervacije/{id}', [RezervacijaController::class, 'update']);
     Route::put('/rezervacije/{id}/otkazi', [RezervacijaController::class, 'otkazi']);
