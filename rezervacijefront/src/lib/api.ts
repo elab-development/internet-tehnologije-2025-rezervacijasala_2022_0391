@@ -65,11 +65,9 @@ getRezervacije: async () => {
 
     if (!response.ok) {
       // Ako Laravel vrati grešku (npr. email zauzet), bacamo je da bi je catch u Reactu uhvatio
-      // result.errors.email[0] izvlači konkretnu poruku iz Larabela
       const errorMsg = result.errors ? Object.values(result.errors).flat()[0] : result.message;
       throw new Error(errorMsg || "Greška pri registraciji");
     }
-
     return result;
   },
 

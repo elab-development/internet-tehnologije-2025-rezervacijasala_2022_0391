@@ -32,22 +32,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::delete('users/{user_id}', [UserController::class,'destroy']);//za brisanje naloga
-    Route::get('users', [UserController::class,'index']);//za izlistavanje svih korisnika
-
-    Route::post('/sale', [SalaController::class, 'store']);//da administrator doda novu salu
-    Route::put('/sale/{id}', [SalaController::class, 'update']);
-    Route::delete('/sale/{id}', [SalaController::class, 'destroy']);
-
-    Route::post('/tipovidogadjaja', [TipDogadjajaController::class, 'store']);
-    Route::delete('/tipovidogadjaja/{id}', [TipDogadjajaController::class, 'destroy']);
-
-    Route::post('/karakteristike', [KarakteristikaController::class, 'store']);
-    Route::delete('/karakteristike/{id}', [KarakteristikaController::class, 'destroy']);//administrator moze da obrise neku karakteristiku
+    
 
     Route::get('/rezervacije', [RezervacijaController::class, 'index']);
     Route::get('/rezervacije/{id}', [RezervacijaController::class, 'show']);
     Route::post('/rezervacije', [RezervacijaController::class, 'store']);
     Route::put('/rezervacije/{id}', [RezervacijaController::class, 'update']);
     Route::put('/rezervacije/{id}/otkazi', [RezervacijaController::class, 'otkazi']);
-    Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy']);
+    
+    //samo admin
+    Route::middleware('admin')->group(function () { 
+        Route::get('users', [UserController::class,'index']);//za izlistavanje svih korisnika
+         Route::post('/sale', [SalaController::class, 'store']);//da administrator doda novu salu
+         Route::put('/sale/{id}', [SalaController::class, 'update']);
+         Route::delete('/sale/{id}', [SalaController::class, 'destroy']);
+
+        Route::post('/tipovidogadjaja', [TipDogadjajaController::class, 'store']);
+        Route::delete('/tipovidogadjaja/{id}', [TipDogadjajaController::class, 'destroy']);
+
+        Route::post('/karakteristike', [KarakteristikaController::class, 'store']);
+        Route::delete('/karakteristike/{id}', [KarakteristikaController::class, 'destroy']);//administrator moze da obrise neku karakteristiku
+
+        Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy']);
+
+       
+    });
 });
