@@ -1,5 +1,25 @@
 import { Rezervacija } from "@/lib/types";
 
+
+const formatirajDatum = (datumString: string) => {
+  if (!datumString) return "";
+
+  try {
+    // 1. Prvo zamenimo "T" razmakom, a onda isečemo sve posle sekundi
+    // To pretvara "2026-02-13T14:33:20.000000Z" u "2026-02-13 14:33:20"
+    const cistString = datumString.replace('T', ' ').split('.')[0];
+
+    // 2. Sada ga delimo na datum i vreme
+    const [datum, vreme] = cistString.split(' ');
+    const [godina, mesec, dan] = datum.split('-');
+    const [sati, minuti] = vreme.split(':');
+
+    // 3. Vraćamo naš lep format
+    return `${dan}.${mesec}.${godina}. u ${sati}:${minuti}h`;
+  } catch (e) {
+    return datumString; // U slučaju greške, ispiši sirov podatak
+  }
+};
 export default function RezervacijaCard({ 
   res, 
   onOtkazi 
@@ -34,14 +54,15 @@ export default function RezervacijaCard({
           </span>
         </div>
 
+        
         <div className="space-y-3 mb-6 text-pink-900 dark:text-pink-100">
           <p className="text-sm flex items-center gap-2">
             <span>📅</span> 
-            <span><strong>Početak:</strong> {new Date(res.pocetak).toLocaleString('sr-RS')}</span>
+            <span><strong>Početak:</strong> {formatirajDatum(res.pocetak)}</span>
           </p>
           <p className="text-sm flex items-center gap-2">
             <span>🏁</span> 
-            <span><strong>Kraj:</strong> {new Date(res.kraj).toLocaleString('sr-RS')}</span>
+            <span><strong>Kraj:</strong> {formatirajDatum(res.kraj)}</span>
           </p>
         </div>
       </div>
