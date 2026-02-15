@@ -43,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //samo admin
     Route::middleware('admin')->group(function () { 
         Route::get('users', [UserController::class,'index']);//za izlistavanje svih korisnika
+        Route::put('/users/{id}/ban', [UserController::class, 'ban']);
+        Route::put('/users/{id}/unban', [UserController::class, 'unban']);
          Route::post('/sale', [SalaController::class, 'store']);//da administrator doda novu salu
          Route::put('/sale/{id}', [SalaController::class, 'update']);
          Route::delete('/sale/{id}', [SalaController::class, 'destroy']);

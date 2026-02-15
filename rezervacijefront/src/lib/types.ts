@@ -8,6 +8,7 @@ export type User = {
     password?: string; // Upitnik znači da je opciono (obično je ne šaljemo sa backenda)
     uloga: string;
     banovan: boolean;
+    otkazane_count?: number;
 };
 
 export type Karakteristika = {

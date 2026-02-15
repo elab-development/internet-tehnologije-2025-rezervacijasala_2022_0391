@@ -19,18 +19,16 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-   /* localStorage.removeItem("ulogovan_korisnik");
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");*/
+
     localStorage.clear();
     setCurrentUser(null);
     setShowMenu(false);
     // Ako smo na stranici za rezervacije, moramo se vratiti na home jer nismo više ulogovani
-    if (window.location.pathname === "/rezervacije") {
+    //if (window.location.pathname === "/rezervacije") {
       window.location.href = "/";
-    } else {
-      window.location.reload();
-    }
+    //} else {
+    //  window.location.reload();
+    //}
   };
 
   return (
@@ -61,6 +59,7 @@ export default function Header() {
             Pregled sala
           </Link>
           {currentUser && (
+            <>
             <Link 
               href="/rezervacije" 
               className={`text-[10px] uppercase tracking-[0.2em] font-black transition-all ${
@@ -69,6 +68,17 @@ export default function Header() {
             >
              {currentUser?.uloga === "administrator" ? "Sve Rezervacije" : "Moje Rezervacije"}
             </Link>
+            {currentUser?.uloga === "administrator" && (
+              <Link 
+                href="/admin/korisnici" 
+                className={`text-[10px] uppercase tracking-[0.2em] font-black transition-all ${
+                  pathname === "/admin/korisnici" ? "text-pink-600 border-b border-pink-600" : "text-gray-400 hover:text-pink-600"
+                }`}
+              >
+                Korisnici
+              </Link>
+              )}
+            </>
           )}
         </div>
       </div>

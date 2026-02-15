@@ -112,4 +112,57 @@ getRezervacije: async () => {
 
     return result;
   },
+
+  async banujKorisnika(id: number) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${BASE_URL}/users/${id}/ban`, {
+      method: 'PUT', 
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Greška pri banovanju');
+    }
+
+    return response.json();
+  },
+
+  async odbanujKorisnika(id: number) {
+  const token = localStorage.getItem("token");
+  console.log("Šaljem token:", token);
+  const response = await fetch(`${BASE_URL}/users/${id}/unban`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  });
+  return response.json();
+},
+
+  async getUsers() {
+ 
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${BASE_URL}/users`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Nije moguće učitati listu korisnika');
+  }
+
+  return response.json();
+},
 };
