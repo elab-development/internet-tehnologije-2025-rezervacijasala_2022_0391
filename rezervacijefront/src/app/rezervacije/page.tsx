@@ -5,6 +5,7 @@ import { Rezervacija, User } from "@/lib/types";
 import RezervacijaCard from "@/components/RezervacijaCard";
 import Header from "@/components/Header";
 import { api } from "@/lib/api";
+import StatistikaChart from "@/components/StatistikaChart";
 
 
 export default function Home() {
@@ -70,14 +71,20 @@ export default function Home() {
       <Header />
       <div className="max-w-6xl mx-auto">
        
-        {currentUser?.uloga === "administrator" ? (
-          // Naslov za ADMINA
-          <header className="mb-10 text-center">
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
-              Sistem za Rezervacije Sala
-            </h1>
-            <p className="text-gray-500 uppercase tracking-widest text-xs">Administratorski pregled svih zahteva</p>
-          </header>
+        {currentUser?.uloga === "administrator" ? (<>
+         
+          <header className="py-15 text-center"> 
+            
+            <p className="text-2xl font-black text-gray-900 uppercase tracking-[0.2em]">
+                Administratorski pregled rezervacija
+            </p>
+          
+            <div className="h-1.5 w-40 bg-pink-500 mx-auto mt-8 rounded-full"></div>
+        </header>
+         
+            
+            <div className="h-12"></div> {/* Razmak između grafikona i ostatka */}
+          </>
         ) : (
           // Naslov za OBIČNOG KORISNIKA
           <div className="text-center mb-12 mt-6">
@@ -123,6 +130,16 @@ export default function Home() {
                 ? "Trenutno nema rezervacija u sistemu." 
                 : "Trenutno nemate svojih rezervacija."}
             </p>
+          </div>
+          
+        )}{/* GRAFIKONI NA DNU - SAMO ZA ADMINA */}
+        {currentUser?.uloga === "administrator" && (
+          <div className="mt-20 pt-10 border-t-2 border-pink-100">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-tight">Statistički Izveštaj</h2>
+              <p className="text-pink-500 text-sm italic">Vizuelni pregled poslovanja na osnovu svih podataka</p>
+            </div>
+            <StatistikaChart podaci={sveRezervacije} />
           </div>
         )}
       </div>
