@@ -46,8 +46,8 @@ export default  function SalaDetalji({ params }: PageProps) {
         setLoading(false);
       });
       //novo
-      fetch("http://127.0.0.1:8000/api/karakteristike").then(res => res.json()).then(setSveKarakteristike).catch(err => console.error("Greška karakteristike:", err));
-      fetch("http://127.0.0.1:8000/api/tipovidogadjaja").then(res => res.json()).then(setSviTipovi).catch(err => console.error("Greška tipovi:", err));
+      fetch("http://localhost:8080/api/karakteristike").then(res => res.json()).then(setSveKarakteristike).catch(err => console.error("Greška karakteristike:", err));
+      fetch("http://localhost:8080/api/tipovidogadjaja").then(res => res.json()).then(setSviTipovi).catch(err => console.error("Greška tipovi:", err));
       const userJson = localStorage.getItem("user");
     if (userJson) {
       const user = JSON.parse(userJson);
@@ -101,7 +101,7 @@ const handleSave = async (e: React.FormEvent) => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://127.0.0.1:8000/api/sale/${id}`, {
+    const response = await fetch(`http://localhost:8080/api/sale/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

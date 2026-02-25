@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000/api";
+const BASE_URL = "http://localhost:8080/api";
 
 export const api = {
   // Funkcija za dobavljanje svih sala
@@ -52,7 +52,7 @@ getRezervacije: async () => {
   },
 
   register: async (podaci: any) => {
-    const response = await fetch("http://127.0.0.1:8000/api/register", {
+    const response = await fetch("http://localhost:8080/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ getRezervacije: async () => {
 
   otkaziRezervaciju: async (id: number) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://127.0.0.1:8000/api/rezervacije/${id}/otkazi`, {
+    const response = await fetch(`http://localhost:8080/api/rezervacije/${id}/otkazi`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
