@@ -8,12 +8,14 @@ use App\Http\Controllers\TipDogadjajaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\PraznikController;
 
 //nezasticene rute kojima mogu da pristupe i korisnici koji nisu ulogovani
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+ Route::get('/proveri-praznik', [PraznikController::class, 'proveriPraznik']);
 
 Route::get('sale',[SalaController::class,'index']);//da korisnici vide sta iznajmljuju
 Route::get('sale/{id}', [SalaController::class,'show']);
@@ -39,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/rezervacije', [RezervacijaController::class, 'store']);
     Route::put('/rezervacije/{id}', [RezervacijaController::class, 'update']);
     Route::put('/rezervacije/{id}/otkazi', [RezervacijaController::class, 'otkazi']);
+
+
     
     //samo admin
     Route::middleware('admin')->group(function () { 
