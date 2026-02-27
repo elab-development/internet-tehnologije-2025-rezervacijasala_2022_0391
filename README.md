@@ -2,13 +2,13 @@
 Ovaj projekat predstavlja aplikaciju za upravljanje i rezervaciju sala za različite vrste događaja. Projekat je rađen za potrebe predmeta Internet Tehnologije.
 
 ## Opis projekta
-Ova aplikacija predstavlja platformu za upravljanje i rezervaciju višenamenskih prostora. Sistem je dizajniran da olakša proces organizacije različitih događaja — od poslovnih sastanaka i velikih konferencija, pa sve do privatnih proslava poput venčanja i "team building" događaja.
+Ova aplikacija predstavlja platformu za upravljanje i rezervaciju višenamenskih prostora. Sistem je dizajniran da olakša proces organizacije različitih događaja — od poslovnih sastanaka i velikih konferencija, pa sve do privatnih proslava poput venčanja i tim bilding događaja.
 
 Glavni cilj projekta je da korisnicima omogući brz i intuitivan uvid u dostupnost sala, dok administratorima pruža moćne alate za kontrolu svih aktivnosti. Ključni fokus prilikom izrade bio je na stabilnosti, modernom korisničkom iskustvu i visokom stepenu bezbednosti podataka, koristeći razdvajanje klijentskog (React) i serverskog (Laravel) dela aplikacije.
 
 ## Šta je potrebno instalirati?
 Da bi aplikacija mogla da se pokrene potrebno je instalirati sledeće:
-- Docker Desktop - Docker nam omogućava pokretanje baze, backen-a i frontend-a u izolovanom okruženju
+- Docker Desktop - Docker nam omogućava pokretanje baze, backend-a i frontend-a u izolovanom okruženju
 - Git - koristi se za kloniranje repozitorijuma i verzionisanje koda
 
 ## Preuzimanje i pokretanje projekta
