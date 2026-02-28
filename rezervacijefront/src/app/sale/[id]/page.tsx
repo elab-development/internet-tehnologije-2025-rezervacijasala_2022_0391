@@ -7,6 +7,9 @@ import { Sala } from "@/lib/types";
 import Link from "next/link";
 import Header from "@/components/Header";
 import RezervacijaModal from "@/components/RezervacijaModal";
+import dynamic from 'next/dynamic';
+
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -30,6 +33,12 @@ export default  function SalaDetalji({ params }: PageProps) {
 
   const [isRezervacijaModalOpen, setIsRezervacijaModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // Ovo dodaješ da mapa ne bi "pukla" prilikom učitavanja stranice
+  const Map = dynamic(() => import('@/components/Map'), { 
+    ssr: false, 
+    loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-3xl flex items-center justify-center">Učitavanje mape...</div>
+  });
   
   useEffect(() => {
 
@@ -210,6 +219,15 @@ const handleFinalnaRezervacija = async (data: any) => {
               <p className="text-gray-700 text-lg leading-relaxed">
                 {sala.opis}
               </p>
+              {/* OVDE DODAJEMO MAPU */}
+        <div className="mt-10">
+  <h3 className="text-sm font-bold uppercase text-gray-400 mb-4 tracking-widest">Lokacija na mapi</h3>
+  <Map 
+    lat={Number(sala.latitude)} 
+    lng={Number(sala.longitude)} 
+    naziv={sala.naziv} 
+  />
+</div>
             </section>
           </div>
 
