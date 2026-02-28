@@ -28,22 +28,13 @@ export default function RezervacijaModal({
   const [praznikNaziv, setPraznikNaziv] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 "VRATAR" FUNKCIJA - Proverava da li je objekat zaista validan Date
+  // Provera da li je objekat validan Date
   const isValidDate = (d: any): d is Date => {
     return d instanceof Date && !isNaN(d.getTime());
   };
 
-  // FORMAT ZA BAZU (YYYY-MM-DD HH:MM:SS)
-  const formatDateTime = (date: any): string => {
-    if (!isValidDate(date)) return ""; // Ako nije validan datum, ne radi ništa
-    const d = date;
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
-  };
-
-  // FORMAT ZA API PRAZNIKA (YYYY-MM-DD)
-  const formatDateForAPI = (date: any): string => {
-    if (!isValidDate(date)) return ""; // Sigurnosni ventil
+  // Format za API praznika (YYYY-MM-DD)
+  const formatDateForAPI = (date: Date): string => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
     const d = String(date.getDate()).padStart(2, "0");
@@ -99,6 +90,7 @@ export default function RezervacijaModal({
   }, [startDate, endDate]);
 
   const handleSave = () => {
+    
     if (!isValidDate(startDate) || !isValidDate(endDate)) {
       alert("Molimo izaberite ispravne datume.");
       return;
@@ -109,13 +101,35 @@ export default function RezervacijaModal({
       return;
     }
 
-    onConfirm({
-      idSale: sala.id,
-      idTipDogadjaja: selectedTip,
-      pocetak: formatDateTime(startDate),
-      kraj: formatDateTime(endDate),
-      status: "na_cekanju",
-    });
+    if (praznikNaziv) {
+      alert(`Ne možete rezervisati salu na praznik: ${praznikNaziv}`);
+      return;
+    }
+
+    // POMOĆNA FUNKCIJA ZA FORMATIRANJE
+    const formatZaBazu = (d: Date) => {
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+    };
+
+    try {
+      const formattedPocetak = formatZaBazu(startDate);
+      const formattedKraj = formatZaBazu(endDate);
+
+      const podaciZaSlanje = {
+        idSale: sala.id,
+        idTipDogadjaja: selectedTip,
+        pocetak: formattedPocetak,
+        kraj: formattedKraj,
+        status: "na_cekanju",
+      };
+
+      // Šaljemo VEĆ FORMATIRANE stringove
+      onConfirm(podaciZaSlanje);
+
+    } catch (error) {
+      alert("Došlo je do greške pri formatiranju datuma.");
+    }
   };
 
   return (
@@ -181,13 +195,18 @@ export default function RezervacijaModal({
 
         {/* DUGMIĆI */}
         <div className="p-6 bg-gray-50 flex gap-3 shrink-0">
-          <button onClick={onClose} className="flex-1 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-500">
+          <button 
+            onClick={onClose} 
+            className="flex-1 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-500"
+          >
             ODUSTANI
           </button>
           <button
             onClick={handleSave}
-            disabled={loading}
-            className={`flex-1 py-3 rounded-xl font-bold text-white ${loading ? "bg-gray-300" : "bg-pink-600 shadow-lg"}`}
+            disabled={loading || !!praznikNaziv}
+            className={`flex-1 py-3 rounded-xl font-bold text-white ${
+              loading || praznikNaziv ? "bg-gray-300" : "bg-pink-600 shadow-lg"
+            }`}
           >
             {loading ? "..." : "POTVRDI"}
           </button>

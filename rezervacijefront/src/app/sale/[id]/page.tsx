@@ -50,14 +50,12 @@ export default  function SalaDetalji({ params }: PageProps) {
       fetch("http://localhost:8080/api/tipovidogadjaja").then(res => res.json()).then(setSviTipovi).catch(err => console.error("Greška tipovi:", err));
       const userJson = localStorage.getItem("user");
     if (userJson) {
-      const user = JSON.parse(userJson);
-      console.log("Pronađen korisnik:", user);
-      setCurrentUser(user); // Čuvamo celog korisnika u state da bismo imali njegov ID za rezervaciju
-      if (user.uloga && user.uloga.toLowerCase() === "administrator") {
-        console.log("Korisnik je administrator, postavljam isAdmin na true");
-        setIsAdmin(true);
-      }
-    } else{
+  const user = JSON.parse(userJson);
+  setCurrentUser(user);
+  if (user.uloga && user.uloga.toLowerCase() === "administrator") {
+    setIsAdmin(true);
+  }
+} else{
       // Ako nema korisnika u localStorage, isprazni state
       setCurrentUser(null);
       setIsAdmin(false);
@@ -149,8 +147,8 @@ const handleFinalnaRezervacija = async (data: any) => {
       idKorisnika: currentUser.id,
       idSale: sala.id,
       idTipDogadjaja: data.idTipDogadjaja,
-      pocetak: formatirajDatumZaLaravel(data.pocetak),
-      kraj: formatirajDatumZaLaravel(data.kraj),
+      pocetak: data.pocetak, // ← DIREKTNO iz modala (string)
+      kraj: data.kraj,       // ← DIREKTNO iz modala (string)
       status: 'na_cekanju'
     };
 
