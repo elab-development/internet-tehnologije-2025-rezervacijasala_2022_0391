@@ -7,6 +7,9 @@ import { Sala } from "@/lib/types";
 import Link from "next/link";
 import Header from "@/components/Header";
 import RezervacijaModal from "@/components/RezervacijaModal";
+import dynamic from 'next/dynamic';
+
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -30,6 +33,12 @@ export default  function SalaDetalji({ params }: PageProps) {
 
   const [isRezervacijaModalOpen, setIsRezervacijaModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // Ovo dodaješ da mapa ne bi "pukla" prilikom učitavanja stranice
+  const Map = dynamic(() => import('@/components/Map'), { 
+    ssr: false, 
+    loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-3xl flex items-center justify-center">Učitavanje mape...</div>
+  });
   
   useEffect(() => {
 
@@ -50,14 +59,12 @@ export default  function SalaDetalji({ params }: PageProps) {
       fetch("http://localhost:8080/api/tipovidogadjaja").then(res => res.json()).then(setSviTipovi).catch(err => console.error("Greška tipovi:", err));
       const userJson = localStorage.getItem("user");
     if (userJson) {
-      const user = JSON.parse(userJson);
-      console.log("Pronađen korisnik:", user);
-      setCurrentUser(user); // Čuvamo celog korisnika u state da bismo imali njegov ID za rezervaciju
-      if (user.uloga && user.uloga.toLowerCase() === "administrator") {
-        console.log("Korisnik je administrator, postavljam isAdmin na true");
-        setIsAdmin(true);
-      }
-    } else{
+  const user = JSON.parse(userJson);
+  setCurrentUser(user);
+  if (user.uloga && user.uloga.toLowerCase() === "administrator") {
+    setIsAdmin(true);
+  }
+} else{
       // Ako nema korisnika u localStorage, isprazni state
       setCurrentUser(null);
       setIsAdmin(false);
@@ -149,8 +156,8 @@ const handleFinalnaRezervacija = async (data: any) => {
       idKorisnika: currentUser.id,
       idSale: sala.id,
       idTipDogadjaja: data.idTipDogadjaja,
-      pocetak: formatirajDatumZaLaravel(data.pocetak),
-      kraj: formatirajDatumZaLaravel(data.kraj),
+      pocetak: data.pocetak, // ← DIREKTNO iz modala (string)
+      kraj: data.kraj,       // ← DIREKTNO iz modala (string)
       status: 'na_cekanju'
     };
 
@@ -212,6 +219,15 @@ const handleFinalnaRezervacija = async (data: any) => {
               <p className="text-gray-700 text-lg leading-relaxed">
                 {sala.opis}
               </p>
+              {/* OVDE DODAJEMO MAPU */}
+        <div className="mt-10">
+  <h3 className="text-sm font-bold uppercase text-gray-400 mb-4 tracking-widest">Lokacija na mapi</h3>
+  <Map 
+    lat={Number(sala.latitude)} 
+    lng={Number(sala.longitude)} 
+    naziv={sala.naziv} 
+  />
+</div>
             </section>
           </div>
 

@@ -112,46 +112,30 @@ export default function HomePage() {
     pad(date.getMinutes()) + ':' +
     pad(date.getSeconds());
 };
-  const handleFinalnaRezervacija = async (data: any) => {
-     if (!currentUser) {
-       alert("Morate biti ulogovani da biste rezervisali.");
-       return;
-     }
+ const handleFinalnaRezervacija = async (data: any) => {
+  if (!currentUser) {
+    alert("Morate biti ulogovani.");
+    return;
+  }
 
-     try {
-       // Laravel često traži datum u formatu "YYYY-MM-DD HH:mm:ss"
-       // toISOString() šalje format "2026-02-06T12:00:00.000Z"
-       // Ako Laravel izbaci grešku, ovde ćemo formatirati malo drugačije
-       const payload = {
-         //idKorisnika: currentUser.id,
-         //idSale: data.idSale,
-         //idTipDogadjaja: data.idTipDogadjaja,
-         idKorisnika: Number(currentUser.id), // Pretvaramo u broj
-         idSale: Number(data.idSale),         // Pretvaramo u broj
-         idTipDogadjaja: Number(data.idTipDogadjaja), // Pretvaramo u broj
-         //pocetak: data.pocetak.toISOString(), 
-         //kraj: data.kraj.toISOString(),
-         // Zamenjujemo 'T' razmakom i sklanjamo milisekunde/Z
-         pocetak: formatirajDatumZaLaravel(data.pocetak),
-          kraj: formatirajDatumZaLaravel(data.kraj),
-          //pocetak: data.pocetak.toISOString().replace('T', ' ').substring(0, 19),
-          //kraj: data.kraj.toISOString().replace('T', ' ').substring(0, 19),
-         status: 'na_cekanju'
-       };
+  try {
+    const payload = {
+      idKorisnika: Number(currentUser.id),
+      idSale: Number(data.idSale),
+      idTipDogadjaja: Number(data.idTipDogadjaja),
+      pocetak: data.pocetak,
+      kraj: data.kraj,
+      status: 'na_cekanju'
+    };
 
-       await api.createRezervacija(payload);
-       
-       alert("Rezervacija uspešno poslata!");
-       setSelectedSala(null); // Ovo zatvara modal
-     } catch (error: any) {
-       /*console.error("Detalji greške:", error);
-       alert(error.message || "Došlo je do greške.");*/
-       console.log("Rezervacija odbijena:", error.message);
-      alert(error.message);
-     }
-  };
+    await api.createRezervacija(payload);
 
-
+    alert("Rezervacija uspešno kreirana!");
+    setSelectedSala(null);
+  } catch (error: any) {
+    alert(error.message || "Greška pri rezervaciji.");
+  }
+};
   // LOGIKA FILTRIRANJA
   // pre iz mocka
   //const filtriraneSale = mock_sale.filter((sala) => {

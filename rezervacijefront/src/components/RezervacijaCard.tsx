@@ -1,25 +1,33 @@
 import { Rezervacija } from "@/lib/types";
 
-
-const formatirajDatum = (datumString: string) => {
-  if (!datumString) return "";
+const formatirajDatum = (datum: string | Date) => {
+  if (!datum) return "";
 
   try {
-    // 1. Prvo zamenimo "T" razmakom, a onda isečemo sve posle sekundi
-    // To pretvara "2026-02-13T14:33:20.000000Z" u "2026-02-13 14:33:20"
-    const cistString = datumString.replace('T', ' ').split('.')[0];
-
-    // 2. Sada ga delimo na datum i vreme
-    const [datum, vreme] = cistString.split(' ');
-    const [godina, mesec, dan] = datum.split('-');
+    // Ako je Date objekat, konvertuj ga u naš format
+    if (datum instanceof Date) {
+      const dan = datum.getDate().toString().padStart(2, '0');
+      const mesec = (datum.getMonth() + 1).toString().padStart(2, '0');
+      const godina = datum.getFullYear();
+      const sati = datum.getHours().toString().padStart(2, '0');
+      const minuti = datum.getMinutes().toString().padStart(2, '0');
+      
+      return `${dan}.${mesec}.${godina}. u ${sati}:${minuti}h`;
+    }
+    
+    // Ako je string, radi kao pre
+    const cistString = datum.replace('T', ' ').split('.')[0];
+    const [datumStr, vreme] = cistString.split(' ');
+    const [godina, mesec, dan] = datumStr.split('-');
     const [sati, minuti] = vreme.split(':');
 
-    // 3. Vraćamo naš lep format
     return `${dan}.${mesec}.${godina}. u ${sati}:${minuti}h`;
   } catch (e) {
-    return datumString; // U slučaju greške, ispiši sirov podatak
+    console.warn("Greška pri formatiranju datuma:", datum, e);
+    return String(datum);
   }
 };
+
 export default function RezervacijaCard({ 
   res, 
   onOtkazi 
@@ -27,6 +35,7 @@ export default function RezervacijaCard({
   res: Rezervacija; 
   onOtkazi: (id: number) => void; 
 }) {
+ 
   // Boje za bedževe (statusi)
   const statusColor = {
     potvrdjena: "bg-green-100 text-green-800",

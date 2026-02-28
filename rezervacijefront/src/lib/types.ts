@@ -9,6 +9,7 @@ export type User = {
     uloga: string;
     banovan: boolean;
     otkazane_count?: number;
+
 };
 
 export type Karakteristika = {
@@ -32,6 +33,8 @@ export type Sala = {
     // Ako uz salu šalješ i njene karakteristike ili tipove:
    karakteristike: Karakteristika[]; 
   tipovi_dogadjaja: TipDogadjaja[];
+      latitude: number;
+    longitude: number;
 };
 
 export type Rezervacija = {
