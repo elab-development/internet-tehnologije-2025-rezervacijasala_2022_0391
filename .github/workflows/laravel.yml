@@ -33,6 +33,7 @@ jobs:
     - name: Generate key
       run: php rezervacijeapi/artisan key:generate
     - name: Run Tests
+      working-directory: rezervacijeapi
       run: php rezervacijeapi/artisan test
       env:
         DB_CONNECTION: mysql
