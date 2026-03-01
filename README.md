@@ -21,17 +21,9 @@ git clone https://github.com/elab-development/internet-tehnologije-2025-rezervac
 ```
 ```
 cd <IME_FOLDERA>
-``` 
-
-2. Pokretanje preko Docker-a
-
-    U root folderu projekta u terminalu kucati:
-
-```
-docker-compose up -d --build
 ```
 
-3. Podešavanje Laravel aplikacije
+2. Podešavanje Laravel aplikacije
 
     U folderu rezervacijeapi podesiti .env fajl (ako ne postoji, kopirati iz .env.example) i postaviti da ima sledeća podešavanja za DB_*
 
@@ -44,22 +36,30 @@ DB_USERNAME=app_user
 DB_PASSWORD=app_pass
 ```
 
+3. Pokretanje preko Docker-a
+
+    U root folderu projekta u terminalu kucati:
+
+```
+docker-compose up -d --build
+```
+
 4. Instalacija zavisnosti
 
 ```
-docker-compose exec app composer install
+docker-compose exec app_laravel composer install
 ```
 
 5. Osvežavanje konfiguracije
 
 ```
-docker-compose exec app php artisan config:clear
+docker-compose exec app_laravel php artisan config:clear
 ```
 
 6. Generisanje baze
 
 ```
-docker-compose exec app php artisan migrate:fresh --seed
+docker exec -it app_laravel php artisan migrate:fresh --seed
 ```
 
 7. Pristup aplikaciji
