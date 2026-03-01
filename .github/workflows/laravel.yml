@@ -52,3 +52,21 @@ jobs:
         DB_DATABASE: testing
         DB_USERNAME: root
         DB_PASSWORD: root
+  build-docker:
+    needs: laravel-tests # Pokreće se samo ako testovi prođu 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Backend Image
+        run: |
+          docker build -t moj-projekat-backend:latest -f docker/laravel/Dockerfile ./rezervacijeapi
+          echo "Backend image built successfully!"
+
+      - name: Build Frontend Image
+        run: |
+          docker build -t moj-projekat-frontend:latest -f rezervacijefront/Dockerfile ./rezervacijefront
+          echo "Frontend image built successfully!"
