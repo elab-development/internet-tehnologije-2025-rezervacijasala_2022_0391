@@ -8,10 +8,7 @@ const nextConfig: NextConfig = {
     // Ovo dozvoljava build čak i ako postoje TypeScript greške
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // Ovo ignoriše ESLint greške tokom build-a
-    ignoreDuringBuilds: true,
-  },
+
 } as any; 
 
 
