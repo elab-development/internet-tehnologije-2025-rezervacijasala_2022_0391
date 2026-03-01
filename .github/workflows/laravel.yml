@@ -1,0 +1,72 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ "feature/tests", "develop", "main" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, dom, fileinfo, mysql
+        tools: composer:v2
+
+    - name: Install Dependencies
+      working-directory: rezervacijeapi
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress
+
+    - name: Copy .env
+      working-directory: rezervacijeapi
+      run: cp .env.example .env
+
+    - name: Generate key
+      working-directory: rezervacijeapi
+      run: php artisan key:generate
+
+    - name: Run Tests
+      working-directory: rezervacijeapi
+      run: php artisan test
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: testing
+        DB_USERNAME: root
+        DB_PASSWORD: root
+  build-docker:
+    needs: laravel-tests # Pokreće se samo ako testovi prođu 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Backend Image
+        run: |
+          docker build -t moj-projekat-backend:latest -f docker/laravel/Dockerfile ./rezervacijeapi
+          echo "Backend image built successfully!"
+
+      - name: Build Frontend Image
+        run: |
+          docker build -t moj-projekat-frontend:latest -f rezervacijefront/Dockerfile ./rezervacijefront
+          echo "Frontend image built successfully!"
