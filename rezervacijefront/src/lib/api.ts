@@ -1,12 +1,48 @@
 const BASE_URL = "http://localhost:8080/api";
 
 export const api = {
-  // Funkcija za dobavljanje svih sala
-  getSale: async () => {
-    const res = await fetch(`${BASE_URL}/sale`);
-    if (!res.ok) throw new Error("Greška pri učitavanju sala");
-    return res.json();
-  },
+
+getSale: async (page: number = 1, params: any = {}) => {
+  // rucno pravimo query string
+  let queryString = `?page=${page}`;
+
+  Object.keys(params).forEach((key) => {
+    const value = params[key];
+
+    if (Array.isArray(value)) {
+      // za nizove (tipovi, karakteristike)
+      value.forEach((v) => {
+        queryString += `&${encodeURIComponent(key)}[]=${encodeURIComponent(v)}`;
+      });
+    } else if (value !== undefined && value !== null && value !== "" && value !== "sve") {
+      // za obične vrednosti
+      queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    }
+  });
+
+  const finalUrl = `${BASE_URL}/sale${queryString}`;
+  console.log("FINALNI URL KOJI ZOVEEM:", finalUrl);
+
+  try {
+    const res = await fetch(finalUrl, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Server Error ${res.status}: ${errorText}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("KRITIČNA GREŠKA PRI FETCH-U:", err);
+    throw err;
+  }
+},
 
   // Funkcija za jednu salu po ID-u
   getSalaById: async (id: number) => {
