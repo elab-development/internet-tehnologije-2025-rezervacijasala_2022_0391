@@ -18,9 +18,7 @@ Glavni cilj projekta je da korisnicima omogući brz i intuitivan uvid u dostupno
 
 **HTTP klijent:** Fetch API za komunikaciju između frontend-a i backend-a
 
-**Eksterni API:** - Abstract API Holidays - korišćen za sinhronizaciju sa bazom podataka o državnim praznicima
-
-                  - Leaflet i React-Leaflet - korišćeni za vizuelni prikaz lokacija sala
+**Eksterni API:** - Abstract API Holidays (korišćen za sinhronizaciju sa bazom podataka o državnim praznicima) i Leaflet & React-Leaflet (korišćeni za vizuelni prikaz lokacija sala)
 
 ## Šta je potrebno instalirati?
 Da bi aplikacija mogla da se pokrene potrebno je instalirati sledeće:
