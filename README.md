@@ -6,6 +6,16 @@ Ova aplikacija predstavlja platformu za upravljanje i rezervaciju višenamenskih
 
 Glavni cilj projekta je da korisnicima omogući brz i intuitivan uvid u dostupnost sala, dok administratorima pruža moćne alate za kontrolu svih aktivnosti. Ključni fokus prilikom izrade bio je na stabilnosti, modernom korisničkom iskustvu i visokom stepenu bezbednosti podataka, koristeći razdvajanje klijentskog (React) i serverskog (Laravel) dela aplikacije.
 
+## Tehnologije koje su korišćene
+
+**Frontend:** Next.js (React), TypeScript, Tailwind CSS
+**Backend:** Laravel 11 (PHP) kao REST API
+**Baza podataka:** MySQL
+**Kontejnerizacija:** Docker i Docker Compose
+**HTTP klijent:** Fetch API za komunikaciju između frontend-a i backend-a
+**Eksterni API:** Abstract API Holidays - korišćen za sinhronizaciju sa bazom podataka o državnim praznicima
+                  Leaflet i React-Leaflet - korišćeni za vizuelni prikaz lokacija sala
+
 ## Šta je potrebno instalirati?
 Da bi aplikacija mogla da se pokrene potrebno je instalirati sledeće:
 - Docker Desktop - Docker nam omogućava pokretanje baze, backend-a i frontend-a u izolovanom okruženju
@@ -65,6 +75,7 @@ docker exec -it app_laravel php artisan migrate:fresh --seed
 7. Pristup aplikaciji
 Nakon uspešnog pokretanja aplikaciji je moguće pristupiti preko sledećeg linka:
 [text](http://localhost:3000/)
+[text](http://localhost:8080/api )
 
 ## Opis funkcionalnosti projekta
 
@@ -73,10 +84,12 @@ Projekat implementira sledeće ključne funkcionalnosti:
 ### Pretraga i Filtriranje
 * **Dinamička pretraga:** Pretraga sala po nazivu ili lokaciji u realnom vremenu (rezultati se ažuriraju dok korisnik kuca).
 * **Napredno filtriranje:** Sužavanje izbora na osnovu kapaciteta, tipa događaja i specifičnih karakteristika sale.
+* **Serverska Paginacija:** Omogućavanje brzog učitavanja podataka, slanje frontend-u samo onoliko sala koliko je potrebno za trenutni prikaz, uz informaciju o ukupnom broju stranica.
 * **Sortiranje:** Organizacija prikaza po abecednom redu ili po kapacitetu.
 
 ### Sistem Rezervacija
 * **Pregled dostupnosti:** Vizuelni uvid u zauzete termine, što omogućava lakši odabir slobodnog datuma.
+* **Integracija sa kalendarom praznika:** Aplikacija koristi eksterni servis za preuzimanje informacija o praznicima. Ovo omogućava da sistem automatski prepozna neradne dane prilikom kreiranja rezervacija, sprečavajući zakazivanje događaja u terminima koji nisu dostupni zbog državnih praznika
 * **Smart Booking:** Sistem automatski proverava dostupnost i sprečava dupliranje termina.
 * **Upravljanje rezervacijama:** Korisnici prate svoje rezervacije, dok administrator ima hronološki pregled svih rezervacija u sistemu.
 
