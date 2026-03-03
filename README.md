@@ -9,11 +9,17 @@ Glavni cilj projekta je da korisnicima omogući brz i intuitivan uvid u dostupno
 ## Tehnologije koje su korišćene
 
 **Frontend:** Next.js (React), TypeScript, Tailwind CSS
+
 **Backend:** Laravel 11 (PHP) kao REST API
+
 **Baza podataka:** MySQL
+
 **Kontejnerizacija:** Docker i Docker Compose
+
 **HTTP klijent:** Fetch API za komunikaciju između frontend-a i backend-a
+
 **Eksterni API:** Abstract API Holidays - korišćen za sinhronizaciju sa bazom podataka o državnim praznicima
+
                   Leaflet i React-Leaflet - korišćeni za vizuelni prikaz lokacija sala
 
 ## Šta je potrebno instalirati?
