@@ -201,4 +201,24 @@ getRezervacije: async () => {
 
   return response.json();
 },
+
+potvrdiRezervaciju: async (id: number) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${BASE_URL}/rezervacije/${id}/potvrdi`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Greška pri potvrđivanju");
+    }
+
+    return response.json();
+  },
+
 };

@@ -61,6 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy']);
 
+        Route::put('/rezervacije/{id}/potvrdi', [RezervacijaController::class, 'potvrdi']);// administrator potvrdjuje rezervaciju
+
        
     });
 });

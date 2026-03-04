@@ -6,20 +6,20 @@ const formatirajDatum = (datum: string | Date) => {
   try {
     // Ako je Date objekat, konvertuj ga u naš format
     if (datum instanceof Date) {
-      const dan = datum.getDate().toString().padStart(2, '0');
-      const mesec = (datum.getMonth() + 1).toString().padStart(2, '0');
+      const dan = datum.getDate().toString().padStart(2, "0");
+      const mesec = (datum.getMonth() + 1).toString().padStart(2, "0");
       const godina = datum.getFullYear();
-      const sati = datum.getHours().toString().padStart(2, '0');
-      const minuti = datum.getMinutes().toString().padStart(2, '0');
-      
+      const sati = datum.getHours().toString().padStart(2, "0");
+      const minuti = datum.getMinutes().toString().padStart(2, "0");
+
       return `${dan}.${mesec}.${godina}. u ${sati}:${minuti}h`;
     }
-    
+
     // Ako je string, radi kao pre
-    const cistString = datum.replace('T', ' ').split('.')[0];
-    const [datumStr, vreme] = cistString.split(' ');
-    const [godina, mesec, dan] = datumStr.split('-');
-    const [sati, minuti] = vreme.split(':');
+    const cistString = datum.replace("T", " ").split(".")[0];
+    const [datumStr, vreme] = cistString.split(" ");
+    const [godina, mesec, dan] = datumStr.split("-");
+    const [sati, minuti] = vreme.split(":");
 
     return `${dan}.${mesec}.${godina}. u ${sati}:${minuti}h`;
   } catch (e) {
@@ -28,25 +28,29 @@ const formatirajDatum = (datum: string | Date) => {
   }
 };
 
-export default function RezervacijaCard({ 
-  res, 
-  onOtkazi 
-}: { 
-  res: Rezervacija; 
-  onOtkazi: (id: number) => void; 
+export default function RezervacijaCard({
+  res,
+  onOtkazi,
+  onPotvrdi,
+  isAdmin = false,
+}: {
+  res: Rezervacija;
+  onOtkazi: (id: number) => void;
+  onPotvrdi?: (id: number) => void;
+  isAdmin?: boolean;
 }) {
- 
   // Boje za bedževe (statusi)
-  const statusColor = {
-    potvrdjena: "bg-green-100 text-green-800",
-    na_cekanju: "bg-yellow-100 text-yellow-800",
-    otkazana: "bg-red-100 text-red-800",
-    zavrsena: "bg-gray-100 text-gray-800",
-    u_toku: "bg-pink-100 text-pink-800",
-  }[res.status] || "bg-blue-100 text-blue-800";
+  const statusColor =
+    {
+      potvrdjena: "bg-green-100 text-green-800",
+      na_cekanju: "bg-yellow-100 text-yellow-800",
+      otkazana: "bg-red-100 text-red-800",
+      zavrsena: "bg-gray-100 text-gray-800",
+      u_toku: "bg-pink-100 text-pink-800",
+    }[res.status] || "bg-blue-100 text-blue-800";
 
   return (
-    /* Klasa 'card' i 'card-hover' dolaze iz tvog globals.css */
+    
     <div className="card card-hover flex flex-col justify-between h-full">
       <div>
         <div className="flex justify-between items-start mb-4">
@@ -58,38 +62,50 @@ export default function RezervacijaCard({
               Sala ID: {res.idSale}
             </p>
           </div>
-          <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold ${statusColor}`}>
-            {res.status.replace('_', ' ')}
+          <span
+            className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold ${statusColor}`}
+          >
+            {res.status.replace("_", " ")}
           </span>
         </div>
 
-        
         <div className="space-y-3 mb-6 text-pink-900 dark:text-pink-100">
           <p className="text-sm flex items-center gap-2">
-            <span>📅</span> 
-            <span><strong>Početak:</strong> {formatirajDatum(res.pocetak)}</span>
+            <span>📅</span>
+            <span>
+              <strong>Početak:</strong> {formatirajDatum(res.pocetak)}
+            </span>
           </p>
           <p className="text-sm flex items-center gap-2">
-            <span>🏁</span> 
-            <span><strong>Kraj:</strong> {formatirajDatum(res.kraj)}</span>
+            <span>🏁</span>
+            <span>
+              <strong>Kraj:</strong> {formatirajDatum(res.kraj)}
+            </span>
           </p>
         </div>
       </div>
 
       {/* DUGMAD */}
       <div className="flex gap-2 mt-auto">
-        <button className="flex-1 bg-pink-600 text-white py-2.5 rounded-xl hover:bg-pink-700 transition-colors text-sm font-semibold shadow-sm">
-          Detalji
-        </button>
-        
+        {/* Dugme POTVRDI - Vidljivo samo adminu i samo ako je na čekanju */}
+        {isAdmin && res.status === "na_cekanju" && (
+          <button
+            onClick={() => onPotvrdi?.(res.id)}
+            className="flex-1 bg-green-600 text-white py-2.5 rounded-xl hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm"
+          >
+            Potvrdi
+          </button>
+        )}
+
         {/* Dugme OTKAŽI */}
-        {(res.status === 'na_cekanju' || res.status === 'potvrdjena') && (
-          <button 
-          onClick={() => onOtkazi(res.id)}
-          className="px-4 py-2.5 border-2 border-pink-200 text-pink-700 rounded-xl 
+        {(res.status === "na_cekanju" || res.status === "potvrdjena") && (
+          <button
+            onClick={() => onOtkazi(res.id)}
+            className={`px-4 py-2.5 border-2 border-pink-200 text-pink-700 rounded-xl 
                              transition-all duration-300 ease-in-out
                              hover:bg-red-500 hover:border-red-500 hover:text-white 
-                             text-sm font-medium">
+                             text-sm font-medium ${res.status === "potvrdjena" ? "flex-1" : ""}`}
+          >
             Otkaži
           </button>
         )}
