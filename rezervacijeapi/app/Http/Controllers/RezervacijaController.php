@@ -112,6 +112,24 @@ class RezervacijaController extends Controller
         ], 500);
     }
     }
+
+    public function potvrdi(Request $request, $id)
+{
+    $rezervacija = Rezervacija::findOrFail($id);
+    
+    // Samo administrator može da potvrđuje
+    if ($request->user()->uloga !== 'administrator') {
+        return response()->json(['message' => 'Nemate ovlašćenje za ovu akciju'], 403);
+    }
+
+    $rezervacija->status = 'potvrdjena';
+    $rezervacija->save();
+
+    return response()->json([
+        'message' => 'Rezervacija uspešno potvrđena',
+        'rezervacija' => $rezervacija
+    ]);
+}
     
 
     /**

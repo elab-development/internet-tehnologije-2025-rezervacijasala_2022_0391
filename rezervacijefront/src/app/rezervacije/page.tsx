@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { useState, useEffect } from "react";
 import { Rezervacija, User } from "@/lib/types";
@@ -6,7 +6,6 @@ import RezervacijaCard from "@/components/RezervacijaCard";
 import Header from "@/components/Header";
 import { api } from "@/lib/api";
 import StatistikaChart from "@/components/StatistikaChart";
-
 
 export default function Home() {
   const [sveRezervacije, setSveRezervacije] = useState<Rezervacija[]>([]);
@@ -18,7 +17,8 @@ export default function Home() {
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser));
     }
-    api.getRezervacije() 
+    api
+      .getRezervacije()
       .then((data) => {
         setSveRezervacije(data);
         setLoading(false);
@@ -30,15 +30,16 @@ export default function Home() {
   }, []);
 
   const handleOtkazi = async (id: number) => {
-    if (!confirm("Da li ste sigurni da želite da otkažete ovu rezervaciju?")) return;
+    if (!confirm("Da li ste sigurni da želite da otkažete ovu rezervaciju?"))
+      return;
 
     try {
       await api.otkaziRezervaciju(id);
 
       setSveRezervacije((prev) =>
         prev.map((res) =>
-          res.id === id ? { ...res, status: "otkazana" } : res
-        )
+          res.id === id ? { ...res, status: "otkazana" } : res,
+        ),
       );
       alert("Rezervacija je uspešno otkazana.");
     } catch (error: any) {
@@ -46,9 +47,25 @@ export default function Home() {
     }
   };
 
+  const handlePotvrdi = async (id: number) => {
+    try {
+      await api.potvrdiRezervaciju(id);
+
+      // Lokalno osvežavamo listu da se UI odmah promeni bez učitavanja stranice
+      setSveRezervacije((prev) =>
+        prev.map((res) =>
+          res.id === id ? { ...res, status: "potvrdjena" } : res
+        )
+      );
+      alert("Rezervacija je uspešno potvrđena.");
+    } catch (error: any) {
+      alert("Greška: " + error.message);
+    }
+  };
+
   // Logika koja filtrira kartice pre nego što se prikažu
   const filtriranePoUlozi = sveRezervacije.filter((res) => {
-// Ako je admin, vidi sve
+    // Ako je admin, vidi sve
     if (currentUser?.uloga === "administrator") return true;
     // Ako je običan korisnik, vidi samo one gde se idKorisnika poklapa sa njegovim ID-jem
     return res.idKorisnika === currentUser?.id;
@@ -70,20 +87,17 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 p-8">
       <Header />
       <div className="max-w-6xl mx-auto">
-       
-        {currentUser?.uloga === "administrator" ? (<>
-         
-          <header className="py-15 text-center"> 
-            
-            <p className="text-2xl font-black text-gray-900 uppercase tracking-[0.2em]">
+        {currentUser?.uloga === "administrator" ? (
+          <>
+            <header className="py-15 text-center">
+              <p className="text-2xl font-black text-gray-900 uppercase tracking-[0.2em]">
                 Administratorski pregled rezervacija
-            </p>
-          
-            <div className="h-1.5 w-40 bg-pink-500 mx-auto mt-8 rounded-full"></div>
-        </header>
-         
-            
-            <div className="h-12"></div> {/* Razmak između grafikona i ostatka */}
+              </p>
+
+              <div className="h-1.5 w-40 bg-pink-500 mx-auto mt-8 rounded-full"></div>
+            </header>
+            <div className="h-12"></div>{" "}
+            {/* Razmak između grafikona i ostatka */}
           </>
         ) : (
           // Naslov za OBIČNOG KORISNIKA
@@ -94,50 +108,63 @@ export default function Home() {
             <div className="h-1 w-20 bg-pink-200 mx-auto mt-2 rounded-full"></div>
           </div>
         )}
-          
-          {/* DUGMIĆI ZA FILTRIRANJE */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {["sve", "na_cekanju", "potvrdjena", "u_toku", "zavrsena", "otkazana"].map((kat) => (
-              <button
-                key={kat}
-                onClick={() => setFilter(kat)}
-                className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                  filter === kat 
-                  ? "bg-pink-600 text-white shadow-md" 
+
+        {/* DUGMIĆI ZA FILTRIRANJE */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {[
+            "sve",
+            "na_cekanju",
+            "potvrdjena",
+            "u_toku",
+            "zavrsena",
+            "otkazana",
+          ].map((kat) => (
+            <button
+              key={kat}
+              onClick={() => setFilter(kat)}
+              className={`px-4 py-2 rounded-lg font-bold transition-all ${
+                filter === kat
+                  ? "bg-pink-600 text-white shadow-md"
                   : "bg-white text-gray-600 hover:bg-pink-50"
-                }`}
-              >
-                {kat.replace("_", " ").toUpperCase()}
-              </button>
-            ))}
-          </div>
-        
+              }`}
+            >
+              {kat.replace("_", " ").toUpperCase()}
+            </button>
+          ))}
+        </div>
 
         {/* PRIKAZ FILTRIRANIH KARTICA */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {prikazaneRezervacije.map((res) => (
-            <RezervacijaCard key={res.id}
-             res={res} 
-             onOtkazi={handleOtkazi}
-             />
+            <RezervacijaCard
+              key={res.id}
+              res={res}
+              onOtkazi={handleOtkazi}
+              onPotvrdi={handlePotvrdi} 
+              isAdmin={currentUser?.uloga === "administrator"} 
+            />
           ))}
         </div>
 
         {prikazaneRezervacije.length === 0 && (
           <div className="text-center py-32 bg-white rounded-3xl border-2 border-dashed border-pink-100">
             <p className="text-pink-900/40 text-lg italic">
-              {currentUser?.uloga === "administrator" 
-                ? "Trenutno nema rezervacija u sistemu." 
+              {currentUser?.uloga === "administrator"
+                ? "Trenutno nema rezervacija u sistemu."
                 : "Trenutno nemate svojih rezervacija."}
             </p>
           </div>
-          
-        )}{/* GRAFIKONI NA DNU - SAMO ZA ADMINA */}
+        )}
+        {/* GRAFIKONI NA DNU - SAMO ZA ADMINA */}
         {currentUser?.uloga === "administrator" && (
           <div className="mt-20 pt-10 border-t-2 border-pink-100">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-tight">Statistički Izveštaj</h2>
-              <p className="text-pink-500 text-sm italic">Vizuelni pregled poslovanja na osnovu svih podataka</p>
+              <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-tight">
+                Statistički Izveštaj
+              </h2>
+              <p className="text-pink-500 text-sm italic">
+                Vizuelni pregled poslovanja na osnovu svih podataka
+              </p>
             </div>
             <StatistikaChart podaci={sveRezervacije} />
           </div>
