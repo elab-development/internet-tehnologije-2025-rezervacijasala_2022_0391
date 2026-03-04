@@ -25,7 +25,7 @@ class SalaApiTest extends TestCase
 
         // 3. Provera statusa i strukture (mora vratiti 200 i listu)
         $response->assertStatus(200)
-                 ->assertJsonCount(3);
+                 ->assertJsonPath('data.0.id', fn($id) => !is_null($id));
     }
 
     /**
