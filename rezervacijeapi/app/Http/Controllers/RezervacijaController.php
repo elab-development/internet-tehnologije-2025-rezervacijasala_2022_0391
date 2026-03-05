@@ -125,6 +125,9 @@ class RezervacijaController extends Controller
     $rezervacija->status = 'potvrdjena';
     $rezervacija->save();
 
+    // Ucitavamo relacije pre slanja odgovora
+    $rezervacija->load(['korisnik', 'sala', 'tipDogadjaja']);
+
     return response()->json([
         'message' => 'Rezervacija uspešno potvrđena',
         'rezervacija' => $rezervacija

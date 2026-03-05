@@ -50,7 +50,6 @@ export default function RezervacijaCard({
     }[res.status] || "bg-blue-100 text-blue-800";
 
   return (
-    
     <div className="card card-hover flex flex-col justify-between h-full">
       <div>
         <div className="flex justify-between items-start mb-4">
@@ -59,7 +58,7 @@ export default function RezervacijaCard({
               Rezervacija #{res.id}
             </h3>
             <p className="text-sm text-pink-700 dark:text-pink-400 opacity-70">
-              Sala ID: {res.idSale}
+              Sala: {res.sala?.naziv || `ID ${res.idSale}`}
             </p>
           </div>
           <span
@@ -82,6 +81,16 @@ export default function RezervacijaCard({
               <strong>Kraj:</strong> {formatirajDatum(res.kraj)}
             </span>
           </p>
+          {/*prikazujemo ime i prezime korisnika adminu*/}
+          {isAdmin && res.korisnik && (
+            <p className="text-sm flex items-center gap-2 pt-2 border-t border-pink-100/50 mt-2 opacity-80">
+              <span>👤</span>
+              <span>
+                <strong>Korisnik:</strong> {res.korisnik.ime}{" "}
+                {res.korisnik.prezime}
+              </span>
+            </p>
+          )}
         </div>
       </div>
 
