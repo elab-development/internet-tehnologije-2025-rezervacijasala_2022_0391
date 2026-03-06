@@ -21,7 +21,6 @@ Route::get('sale',[SalaController::class,'index']);//da korisnici vide sta iznaj
 Route::get('sale/{id}', [SalaController::class,'show']);
 
 Route::get('/tipovidogadjaja', [TipDogadjajaController::class, 'index']);
-
 Route::get('/karakteristike', [KarakteristikaController::class, 'index']);
 
 Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
@@ -63,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::put('/rezervacije/{id}/potvrdi', [RezervacijaController::class, 'potvrdi']);// administrator potvrdjuje rezervaciju
 
+        
        
     });
 });

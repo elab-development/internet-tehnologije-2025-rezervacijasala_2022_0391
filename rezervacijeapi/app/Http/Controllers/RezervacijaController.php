@@ -42,19 +42,19 @@ class RezervacijaController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-                // provera preklapanja
-            $preklapanje = Rezervacija::where('idSale', $request->idSale)
-                ->where('status', '!=', 'otkazana') // Ignorišemo otkazane
-                ->where(function ($query) use ($request) {
-                    $query->where('pocetak', '<', $request->kraj)
-                        ->where('kraj', '>', $request->pocetak);
-                })->exists();
+        // provera preklapanja
+        $preklapanje = Rezervacija::where('idSale', $request->idSale)
+            ->where('status', '!=', 'otkazana') // Ignorišemo otkazane
+            ->where(function ($query) use ($request) {
+                $query->where('pocetak', '<', $request->kraj)
+                    ->where('kraj', '>', $request->pocetak);
+            })->exists();
 
-            if ($preklapanje) {
-                return response()->json([
-                    'message' => 'Izabrani termin je već zauzet. Molimo odaberite drugo vreme.'
-                ], 409); 
-            }
+        if ($preklapanje) {
+            return response()->json([
+                'message' => 'Izabrani termin je već zauzet. Molimo odaberite drugo vreme.'
+            ], 409);
+        }
         $rezervacija = Rezervacija::create($request->all());
 
         return response()->json([
@@ -74,7 +74,7 @@ class RezervacijaController extends Controller
         }
         return response()->json($rezervacija);
     }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -89,104 +89,107 @@ class RezervacijaController extends Controller
      */
     public function update(Request $request, $id)
     {
-       try {
-        /** @var Rezervacija $rezervacija */
-        $rezervacija = Rezervacija::find($id);
+        try {
+            /** @var Rezervacija $rezervacija */
+            $rezervacija = Rezervacija::find($id);
 
-        if (!$rezervacija) {
-            return response()->json(['message' => 'Nema je u bazi!'], 404);
+            if (!$rezervacija) {
+                return response()->json(['message' => 'Nema je u bazi!'], 404);
+            }
+
+            // Koristimo update, ali hvatamo grešku ako baza odbije
+            $rezervacija->update($request->all());
+
+            return response()->json([
+                'message' => 'Uspešno izmenjeno!',
+                'podaci' => $rezervacija
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'poruka' => 'Baza odbija izmenu za ID ' . $id,
+                'greska_detalji' => $e->getMessage() 
+            ], 500);
         }
-
-        // Koristimo update, ali hvatamo grešku ako baza odbije
-        $rezervacija->update($request->all());
-
-        return response()->json([
-            'message' => 'Uspešno izmenjeno!',
-            'podaci' => $rezervacija
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'poruka' => 'Baza odbija izmenu za ID ' . $id,
-            'greska_detalji' => $e->getMessage() // Ovde će pisati šta ne valja
-        ], 500);
-    }
     }
 
     public function potvrdi(Request $request, $id)
-{
-    $rezervacija = Rezervacija::findOrFail($id);
-    
-    // Samo administrator može da potvrđuje
-    if ($request->user()->uloga !== 'administrator') {
-        return response()->json(['message' => 'Nemate ovlašćenje za ovu akciju'], 403);
+    {
+        $rezervacija = Rezervacija::findOrFail($id);
+
+        // Samo administrator može da potvrđuje
+        if ($request->user()->uloga !== 'administrator') {
+            return response()->json(['message' => 'Nemate ovlašćenje za ovu akciju'], 403);
+        }
+
+        $rezervacija->status = 'potvrdjena';
+        $rezervacija->save();
+
+        // Ucitavamo relacije pre slanja odgovora
+        $rezervacija->load(['korisnik', 'sala', 'tipDogadjaja']);
+
+        return response()->json([
+            'message' => 'Rezervacija uspešno potvrđena',
+            'rezervacija' => $rezervacija
+        ]);
     }
 
-    $rezervacija->status = 'potvrdjena';
-    $rezervacija->save();
-
-    // Ucitavamo relacije pre slanja odgovora
-    $rezervacija->load(['korisnik', 'sala', 'tipDogadjaja']);
-
-    return response()->json([
-        'message' => 'Rezervacija uspešno potvrđena',
-        'rezervacija' => $rezervacija
-    ]);
-}
-    
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-    {/** @var Rezervacija $rezervacija */
+    {
+        /** @var Rezervacija $rezervacija */
         $rezervacija = Rezervacija::find($id);
 
-    if (!$rezervacija) {
-        return response()->json(['message' => 'Rezervacija nije pronađena'], 404);
+        if (!$rezervacija) {
+            return response()->json(['message' => 'Rezervacija nije pronađena'], 404);
+        }
+
+        $rezervacija->delete();
+
+        return response()->json(['message' => 'Rezervacija je uspešno otkazana/obrisana']);
     }
 
-    $rezervacija->delete();
+    public function otkazi(Request $request, $id)
+    {
+        $rezervacija = Rezervacija::findOrFail($id);
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Niste autorizovani'], 401);
+        }
 
-    return response()->json(['message' => 'Rezervacija je uspešno otkazana/obrisana']);
+        // Proveri da li rezervacija pripada ulogovanom korisniku
+        if ($rezervacija->idKorisnika !== $user->id && $user->uloga !== 'administrator') {
+            return response()->json(['message' => 'Nemate ovlašćenje za ovu akciju'], 403);
+        }
+
+        $rezervacija->status = 'otkazana';
+        $rezervacija->save();
+
+        // Osvezi podatke o sali i korisniku
+        $rezervacija->load(['korisnik', 'sala', 'tipDogadjaja']);
+
+        return response()->json([
+            'message' => 'Rezervacija uspešno otkazana',
+            'rezervacija' => $rezervacija
+        ]);
     }
-
-    public function otkazi(Request $request,$id)
-{
-    $rezervacija = Rezervacija::findOrFail($id);
-    $user = $request->user();
-    if (!$user) {
-        return response()->json(['message' => 'Niste autorizovani'], 401);
-    }
-    
-    // Proveri da li rezervacija pripada ulogovanom korisniku
-    if ($rezervacija->idKorisnika !== $user->id && $user->uloga !== 'administrator') {
-        return response()->json(['message' => 'Nemate ovlašćenje za ovu akciju'], 403);
-    }
-
-    $rezervacija->status = 'otkazana';
-    $rezervacija->save();
-
-    return response()->json([
-        'message' => 'Rezervacija uspešno otkazana',
-        'rezervacija' => $rezervacija
-    ]);
-}
     public function proveriDostupnost(Request $request)
-{
-    $request->validate([
-        'idSale' => 'required|exists:sale,id',
-        'pocetak' => 'required|date',
-        'kraj' => 'required|date|after:pocetak',
-    ]);
+    {
+        $request->validate([
+            'idSale' => 'required|exists:sale,id',
+            'pocetak' => 'required|date',
+            'kraj' => 'required|date|after:pocetak',
+        ]);
 
-    $preklapanje = Rezervacija::where('idSale', $request->idSale)
-        ->where('status', '!=', 'otkazana')
-        ->where(function ($query) use ($request) {
-            $query->where('pocetak', '<', $request->kraj)
-                  ->where('kraj', '>', $request->pocetak);
-        })->exists();
+        $preklapanje = Rezervacija::where('idSale', $request->idSale)
+            ->where('status', '!=', 'otkazana')
+            ->where(function ($query) use ($request) {
+                $query->where('pocetak', '<', $request->kraj)
+                    ->where('kraj', '>', $request->pocetak);
+            })->exists();
 
-    return response()->json(['slobodno' => !$preklapanje]);
-}
+        return response()->json(['slobodno' => !$preklapanje]);
+    }
 }

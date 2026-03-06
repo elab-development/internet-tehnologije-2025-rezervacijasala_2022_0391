@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sala;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class SalaController extends Controller
 {
@@ -15,7 +16,7 @@ class SalaController extends Controller
 
     public function index(Request $request)
     {
-        // 1. Započinjemo upit sa relacijama
+        // 1. ZAPOCINJEMO UPIT RELACIJAMA
         $query = Sala::with(['tipovi_dogadjaja', 'karakteristike']);
 
         // 2. FILTRIRANJE PO NAZIVU (Search bar)
@@ -41,7 +42,7 @@ class SalaController extends Controller
         // FILTRIRANJE PO TIPOVIMA DOGAĐAJA 
         if ($request->has('tipovi') && !empty($request->tipovi)) {
             $tipoviIds = is_array($request->tipovi) ? $request->tipovi : explode(',', $request->tipovi);
-            $query->whereHas('tipovi_dogadjaja', function ($q) use ($tipoviIds) { 
+            $query->whereHas('tipovi_dogadjaja', function ($q) use ($tipoviIds) {
                 $q->whereIn('tipovidogadjaja.id', $tipoviIds);
             });
         }
@@ -91,23 +92,44 @@ class SalaController extends Controller
      */
     //dodavanje nove sale
     public function store(Request $request)
-    { //$validator = Validator::make($request->all()
+    { 
         $validator = Validator::make($request->all(), [
             'naziv' => 'required|string|max:255',
             'kapacitet' => 'required|integer|min:1',
             'opis' => 'nullable|string',
             'lokacija' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'slike' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $sala = Sala::create($validator->validated());
+        $podaci = $validator->validated();
+
+        // OBRADA SLIKE
+        if ($request->hasFile('slike')) {
+            $putanja = $request->file('slike')->store('slike', 'public');
+            $podaci['slike'] = $putanja; 
+        }
+
+        $sala = Sala::create($podaci);
+
+        // POVEZIVANJE SA KARAKTERISTIKAMA I TIPOVIMA 
+        if ($request->has('karakteristike')) {
+            
+            $sala->karakteristike()->sync($request->input('karakteristike'));
+        }
+
+        if ($request->has('tipovi_dogadjaja')) {
+            $sala->tipovi_dogadjaja()->sync($request->input('tipovi_dogadjaja'));
+        }
 
         return response()->json([
             'message' => 'Sala je uspešno kreirana!',
-            'sala' => $sala
+            'sala' => $sala->load(['karakteristike', 'tipovi_dogadjaja'])
         ], 201);
     }
 
@@ -116,19 +138,7 @@ class SalaController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {/*
-        $sala = Sala::with(['karakteristike', 'dozvoljeniTipoviDogadjaja'])->find($id);
-
-    if (!$sala) {
-        return response()->json(['message' => 'Sala nije pronađena'], 404);
-    }
-
-    return response()->json($sala);*/
-
-        // VISE NE OVO
-        //$sala = Sala::find($id);
-
-        //NEGO OVO
+    {
         $sala = Sala::with(['karakteristike', 'tipovi_dogadjaja'])->find($id);
 
         if (!$sala) {
@@ -157,8 +167,24 @@ class SalaController extends Controller
             return response()->json(['message' => 'Sala nije pronađena'], 404);
         }
 
-        $sala->update($request->only(['naziv', 'opis', 'kapacitet', 'lokacija', 'slike']));
+        // 1. Obrada teksta 
+        $podaci = $request->only(['naziv', 'opis', 'kapacitet', 'lokacija', 'latitude', 'longitude']);
 
+        // 2. Obrada slike (ako je poslata nova)
+        if ($request->hasFile('slike')) {
+            if ($sala->slike) {
+                Storage::disk('public')->delete($sala->slike);
+            }
+
+            // cuvanje nove slike
+            $putanja = $request->file('slike')->store('slike', 'public');
+            $podaci['slike'] = $putanja;
+        }
+
+        // azuriraj salu
+        $sala->update($podaci);
+
+        // 3. Sync relacija
         if ($request->has('karakteristike')) {
             $sala->karakteristike()->sync($request->input('karakteristike'));
         }

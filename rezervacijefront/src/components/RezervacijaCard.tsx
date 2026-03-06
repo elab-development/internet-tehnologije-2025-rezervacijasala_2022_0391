@@ -39,7 +39,7 @@ export default function RezervacijaCard({
   onPotvrdi?: (id: number) => void;
   isAdmin?: boolean;
 }) {
-  // Boje za bedževe (statusi)
+  // Boje za statuse
   const statusColor =
     {
       potvrdjena: "bg-green-100 text-green-800",
@@ -94,9 +94,9 @@ export default function RezervacijaCard({
         </div>
       </div>
 
-      {/* DUGMAD */}
+      {/* DUGMICI*/}
       <div className="flex gap-2 mt-auto">
-        {/* Dugme POTVRDI - Vidljivo samo adminu i samo ako je na čekanju */}
+        {/* Dugme POTVRDI - Vidljivo samo adminu i samo ako je na cekanju */}
         {isAdmin && res.status === "na_cekanju" && (
           <button
             onClick={() => onPotvrdi?.(res.id)}
@@ -106,7 +106,7 @@ export default function RezervacijaCard({
           </button>
         )}
 
-        {/* Dugme OTKAŽI */}
+        {/* Dugme OTKAZI */}
         {(res.status === "na_cekanju" || res.status === "potvrdjena") && (
           <button
             onClick={() => onOtkazi(res.id)}

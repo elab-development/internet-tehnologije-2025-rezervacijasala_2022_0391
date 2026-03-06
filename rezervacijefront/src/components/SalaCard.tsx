@@ -1,6 +1,6 @@
 import { Sala } from "@/lib/types";
 import { useState } from "react";
-import Link from "next/link"
+import Link from "next/link";
 
 export default function SalaCard({
   sala,
@@ -13,27 +13,43 @@ export default function SalaCard({
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const userJson = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+  const userJson =
+    typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const currentUser = userJson ? JSON.parse(userJson) : null;
   const isAdmin = currentUser?.uloga?.toLowerCase() === "administrator";
 
-  let naslovnaSlika = "/slike/placeholder.jpg";
-  if (sala.slike) {
-    // Ako ima više slika odvojenih zarezom, uzimamo prvu
-    const nizSlika = sala.slike.split(","); 
-    const imeSlike = nizSlika[0];
-    
-    naslovnaSlika = `/slike/${imeSlike}`;
+
+
+  // odakle se vuče slika
+
+const getImageUrl = (slike: string | null | undefined) => {
+  // 1. Ako nema slike, vrati placeholder
+  if (!slike) return "/slike/placeholder.jpg";
+
+  // 2. Ako vec ima http, to je sigurno novi Laravel sistem
+  if (slike.startsWith("http")) return slike;
+
+  // 3. TRIK ZA STARE SLIKE:
+  // Ako slika ne sadrzi kosu crtu, to znaci da je to staro ime fajla iz React foldera
+  // (jer  nove slike iz Laravela treba da budu u formatu "slike/ime.jpg")
+  if (!slike.includes("/")) {
+    return `/slike/${slike}`; // Vraća /slike/konfverencijskaSala.jpg
   }
+
+  // 4. Ako sadrži kosu crtu, to je Laravel putanja 
+  return `http://localhost:8080/storage/${slike}`;
+};
+
+  
+  const naslovnaSlika = getImageUrl(sala.slike);
+  console.log("SAD MI SALJI OVO:", sala.slike);
 
   return (
     <div className="card card-hover flex flex-col h-full overflow-hidden p-0 bg-white">
       {/* SLIKA SA KAPACITETOM */}
       <div className="relative h-60 w-full">
         <img
-          //src={sala.slike[0] || "/slike/placeholder.jpg"}
-          //src={(sala.slike && sala.slike.length > 0) ? sala.slike[0] : "/slike/placeholder.jpg"}
-          src={naslovnaSlika} // Koristimo našu novu putanju
+          src={naslovnaSlika} 
           alt={sala.naziv}
           className="w-full h-full object-cover"
         />
@@ -52,30 +68,28 @@ export default function SalaCard({
         <p className="text-sm text-gray-500 flex items-center gap-1 mb-4">
           <span className="text-orange-400">📍</span> {sala.lokacija}
         </p>
-        
+
         <div className="flex items-center justify-between mb-auto">
-        <p className="text-sm font-semibold text-pink-950 italic">
-          Cena na upit
-        </p>
-        <Link 
+          <p className="text-sm font-semibold text-pink-950 italic">
+            Cena na upit
+          </p>
+          <Link
             href={`/sale/${sala.id}`}
             className="text-xs font-bold uppercase text-pink-600 hover:text-pink-800 transition-colors border-b border-pink-600"
           >
             Detalji o sali
           </Link>
-          </div>
+        </div>
         <div className="mt-auto space-y-2">
           {/* DUGME REZERVIŠI (samo za ulogovane korisnike) */}
           {isKorisnik && !isAdmin && (
-            <button 
-            onClick={onRezervisi} 
-            className="w-full bg-pink-600 text-white py-3 font-bold uppercase hover:bg-pink-700 transition-all">
+            <button
+              onClick={onRezervisi}
+              className="w-full bg-pink-600 text-white py-3 font-bold uppercase hover:bg-pink-700 transition-all"
+            >
               Rezerviši salu
             </button>
           )}
-         
-          
-
 
           {/* DUGME POZOVITE */}
           <button

@@ -102,12 +102,23 @@ export default function HomePage() {
     );
 
     const storedUser = localStorage.getItem("ulogovan_korisnik");
+    const token = localStorage.getItem("token");
+
+
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
       setCurrentUser(parsed);
     }
 
     setLoading(true);
+
+    const requestOptions = {
+    headers: {
+      "Authorization": `Bearer ${token}`, // Šaljemo token
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+  };
 
     api
       .getSale(currentPage, {
@@ -116,7 +127,7 @@ export default function HomePage() {
         tipovi: appliedTipovi,
         karakteristike: appliedKarakteristike,
         search: searchQuery,
-      })
+      }, requestOptions)
       .then((response: any) => {
         const res = response;
         if (res && res.data) {
@@ -381,13 +392,25 @@ export default function HomePage() {
         </div>
 
         {/* --- NASLOV SEKCIJE --- */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-light text-pink-950 uppercase tracking-[0.3em]">
-            Sale <span className="font-bold">Srbija</span>
-          </h2>
-          <p className="text-pink-800/60 mt-2 text-sm uppercase tracking-widest">
-            Prostori za sve prilike
-          </p>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12 relative">
+          <div className="text-center">
+            <h2 className="text-4xl font-light text-pink-950 uppercase tracking-[0.3em]">
+              Sale <span className="font-bold">Srbija</span>
+            </h2>
+            <p className="text-pink-800/60 mt-2 text-sm uppercase tracking-widest">
+              Prostori za sve prilike
+            </p>
+          </div>
+
+          {/* DUGME DODAJ SALU */}
+          {currentUser?.uloga === "administrator" && (
+            <Link
+              href="/dodaj"
+              className="md:absolute md:right-0 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-pink-200 active:scale-95 text-xs uppercase tracking-widest flex items-center gap-2"
+            >
+              <span className="text-lg">+</span> Dodaj novu salu
+            </Link>
+          )}
         </div>
 
         {/* --- GRID SA SALAMA --- */}
