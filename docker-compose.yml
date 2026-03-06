@@ -20,6 +20,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./rezervacijeapi:/var/www
+    command: bash -c "php artisan storage:link && php-fpm"
     depends_on:
       - db
 
