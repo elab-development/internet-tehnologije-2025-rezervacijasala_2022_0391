@@ -1,3 +1,4 @@
+
 const BASE_URL = "http://localhost:8080/api";
 
 export const api = {
@@ -27,7 +28,7 @@ export const api = {
     const finalUrl = `${BASE_URL}/sale${queryString}`;
     console.log("FINALNI URL KOJI ZOVEEM:", finalUrl);
 
-try {
+    try {
       const res = await fetch(finalUrl, {
         method: "GET",
         headers: {
@@ -232,18 +233,17 @@ try {
     return response.json();
   },
 
-
   createSala: async (data: FormData) => {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
 
     console.log("Šaljem token:", localStorage.getItem("token"));
 
     const response = await fetch(`${BASE_URL}/sale`, {
       method: "POST",
-      body: data, 
+      body: data,
       headers: {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`, 
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -275,5 +275,33 @@ try {
     return res.json();
   },
 
-  
+deleteSala: async (id: any) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:8080/api/sale/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Greška pri brisanju sale");
+    }
+
+    return response.json();
+  },
+
+  getAllSale: async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${BASE_URL}/sale/all`, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) throw new Error("Greška pri učitavanju");
+    return res.json();
+  },
 };

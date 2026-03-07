@@ -92,7 +92,7 @@ class SalaController extends Controller
      */
     //dodavanje nove sale
     public function store(Request $request)
-    { 
+    {
         $validator = Validator::make($request->all(), [
             'naziv' => 'required|string|max:255',
             'kapacitet' => 'required|integer|min:1',
@@ -112,14 +112,14 @@ class SalaController extends Controller
         // OBRADA SLIKE
         if ($request->hasFile('slike')) {
             $putanja = $request->file('slike')->store('slike', 'public');
-            $podaci['slike'] = $putanja; 
+            $podaci['slike'] = $putanja;
         }
 
         $sala = Sala::create($podaci);
 
         // POVEZIVANJE SA KARAKTERISTIKAMA I TIPOVIMA 
         if ($request->has('karakteristike')) {
-            
+
             $sala->karakteristike()->sync($request->input('karakteristike'));
         }
 
@@ -202,19 +202,25 @@ class SalaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy($id)
+{
+    $sala = Sala::find($id);
+
+    if (!$sala) {
+        return response()->json(['message' => 'Sala nije pronađena'], 404);
+    }
+
+    $sala->delete();
+
+    return response()->json(['message' => 'Sala uspešno obrisana!'], 200);
+}
+
+
+    public function all()
     {
-        /** @var Sala $sala */
-        $sala = Sala::find($id);
-
-
-        if (!$sala) {
-            return response()->json(['message' => 'Sala nije pronađena u bazi'], 404);
-        }
-        $sala->delete();
-
-        return response()->json([
-            'message' => 'Sala je uspešno obrisana!'
-        ], 200);
+        // Vraćamo sve sale, možda želiš da dodaš i relacije ako su ti potrebne
+        $sale = \App\Models\Sala::with(['tipovi_dogadjaja', 'karakteristike'])->get();
+        return response()->json($sale);
     }
 }

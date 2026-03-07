@@ -15,10 +15,12 @@ use App\Http\Controllers\PraznikController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
- Route::get('/proveri-praznik', [PraznikController::class, 'proveriPraznik']);
+Route::get('/proveri-praznik', [PraznikController::class, 'proveriPraznik']);
 
-Route::get('sale',[SalaController::class,'index']);//da korisnici vide sta iznajmljuju
-Route::get('sale/{id}', [SalaController::class,'show']);
+Route::get('/sale/all', [SalaController::class, 'all']);
+
+Route::get('sale', [SalaController::class, 'index']); //da korisnici vide sta iznajmljuju
+Route::get('sale/{id}', [SalaController::class, 'show']);
 
 Route::get('/tipovidogadjaja', [TipDogadjajaController::class, 'index']);
 Route::get('/karakteristike', [KarakteristikaController::class, 'index']);
@@ -28,12 +30,12 @@ Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('
 //moraju da imaju token
 
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    Route::delete('users/{user_id}', [UserController::class,'destroy']);//za brisanje naloga
-    
+    Route::delete('users/{user_id}', [UserController::class, 'destroy']); //za brisanje naloga
+
 
     Route::get('/rezervacije', [RezervacijaController::class, 'index']);
     Route::get('/rezervacije/{id}', [RezervacijaController::class, 'show']);
@@ -42,27 +44,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/rezervacije/{id}/otkazi', [RezervacijaController::class, 'otkazi']);
 
 
-    
+
     //samo admin
-    Route::middleware('admin')->group(function () { 
-        Route::get('users', [UserController::class,'index']);//za izlistavanje svih korisnika
+    Route::middleware('admin')->group(function () {
+        Route::get('users', [UserController::class, 'index']); //za izlistavanje svih korisnika
         Route::put('/users/{id}/ban', [UserController::class, 'ban']);
         Route::put('/users/{id}/unban', [UserController::class, 'unban']);
-         Route::post('/sale', [SalaController::class, 'store']);//da administrator doda novu salu
-         Route::put('/sale/{id}', [SalaController::class, 'update']);
-         Route::delete('/sale/{id}', [SalaController::class, 'destroy']);
+        Route::post('/sale', [SalaController::class, 'store']); //da administrator doda novu salu
+        Route::put('/sale/{id}', [SalaController::class, 'update']);
+        Route::delete('/sale/{id}', [SalaController::class, 'destroy']);
 
         Route::post('/tipovidogadjaja', [TipDogadjajaController::class, 'store']);
         Route::delete('/tipovidogadjaja/{id}', [TipDogadjajaController::class, 'destroy']);
 
         Route::post('/karakteristike', [KarakteristikaController::class, 'store']);
-        Route::delete('/karakteristike/{id}', [KarakteristikaController::class, 'destroy']);//administrator moze da obrise neku karakteristiku
+        Route::delete('/karakteristike/{id}', [KarakteristikaController::class, 'destroy']); //administrator moze da obrise neku karakteristiku
 
         Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy']);
 
-        Route::put('/rezervacije/{id}/potvrdi', [RezervacijaController::class, 'potvrdi']);// administrator potvrdjuje rezervaciju
+        Route::put('/rezervacije/{id}/potvrdi', [RezervacijaController::class, 'potvrdi']); // administrator potvrdjuje rezervaciju
 
-        
-       
+
+
     });
 });

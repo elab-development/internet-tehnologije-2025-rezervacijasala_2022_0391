@@ -10,11 +10,14 @@ import { User, Sala, TipDogadjaja } from "@/lib/types";
 import { mock_karakteristike } from "@/lib/mock/karakteristike";
 import Header from "../components/Header";
 import RezervacijaModal from "@/components/RezervacijaModal";
+import DeleteSalaModal from "@/components/DeleteSalaModal";
 
 export default function HomePage() {
   // STANJE ZA PODATKE IZ BAZE ANJAA
   console.log("KOMPONENTA SE POKRENULA!");
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [sveSale, setSveSale] = useState<Sala[]>([]);
   const [saleIzBaze, setSaleIzBaze] = useState<Sala[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -104,7 +107,6 @@ export default function HomePage() {
     const storedUser = localStorage.getItem("ulogovan_korisnik");
     const token = localStorage.getItem("token");
 
-
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
       setCurrentUser(parsed);
@@ -113,21 +115,25 @@ export default function HomePage() {
     setLoading(true);
 
     const requestOptions = {
-    headers: {
-      "Authorization": `Bearer ${token}`, // Šaljemo token
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-  };
+      headers: {
+        Authorization: `Bearer ${token}`, // Šaljemo token
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    };
 
     api
-      .getSale(currentPage, {
-        sort: sortOrder,
-        kapacitet: appliedKapacitet,
-        tipovi: appliedTipovi,
-        karakteristike: appliedKarakteristike,
-        search: searchQuery,
-      }, requestOptions)
+      .getSale(
+        currentPage,
+        {
+          sort: sortOrder,
+          kapacitet: appliedKapacitet,
+          tipovi: appliedTipovi,
+          karakteristike: appliedKarakteristike,
+          search: searchQuery,
+        },
+        requestOptions,
+      )
       .then((response: any) => {
         const res = response;
         if (res && res.data) {
@@ -151,6 +157,18 @@ export default function HomePage() {
     appliedKarakteristike,
     searchQuery,
   ]);
+
+  // Učitava sve sale samo kada se otvori modal
+  useEffect(() => {
+    if (showDeleteModal) {
+      api
+        .getAllSale() // Podrazumevam da ćeš dodati ovu metodu u api.ts
+        .then((res: any) => {
+          setSveSale(res);
+        })
+        .catch((err) => console.error("Greška pri učitavanju svih sala:", err));
+    }
+  }, [showDeleteModal]);
 
   const resetujFiltere = () => {
     setTempKapacitet("sve");
@@ -346,7 +364,7 @@ export default function HomePage() {
               </div>
             )}
           </div>
-          {/* --- DODATO: POLJE ZA PRETRAGU --- */}
+          {/* --- POLJE ZA PRETRAGU --- */}
           <div className="relative w-64 md:w-80">
             <input
               type="text"
@@ -402,14 +420,24 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* DUGME DODAJ SALU */}
           {currentUser?.uloga === "administrator" && (
-            <Link
-              href="/dodaj"
-              className="md:absolute md:right-0 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-pink-200 active:scale-95 text-xs uppercase tracking-widest flex items-center gap-2"
-            >
-              <span className="text-lg">+</span> Dodaj novu salu
-            </Link>
+            <div className="md:absolute md:right-0 flex items-center gap-3">
+              {/* Dugme za brisanje */}
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-50 hover:bg-red-100 text-red-600 px-6 py-3 rounded-xl font-bold transition-all text-xs uppercase tracking-widest border border-red-100 active:scale-95"
+              >
+                Obriši
+              </button>
+
+              {/* Dugme za dodavanje */}
+              <Link
+                href="/dodaj"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-pink-200 active:scale-95 text-xs uppercase tracking-widest flex items-center gap-2"
+              >
+                <span className="text-lg">+</span> Dodaj salu
+              </Link>
+            </div>
           )}
         </div>
 
@@ -514,6 +542,26 @@ export default function HomePage() {
             tipoviDogadjaja={selectedSala.tipovi_dogadjaja}
             onClose={() => setSelectedSala(null)}
             onConfirm={handleFinalnaRezervacija}
+          />
+        )}
+
+        {showDeleteModal && (
+          <DeleteSalaModal
+            sale={sveSale}
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={async (id: any) => {
+              // <-- Ovde dodaj : any
+              try {
+                await api.deleteSala(id);
+                alert("Sala uspešno obrisana!");
+                setShowDeleteModal(false);
+
+                setSveSale((prev) => prev.filter((s) => s.id !== id));
+                setSaleIzBaze((prev) => prev.filter((s) => s.id !== id));
+              } catch (e) {
+                alert("Greška pri brisanju!");
+              }
+            }}
           />
         )}
       </div>
