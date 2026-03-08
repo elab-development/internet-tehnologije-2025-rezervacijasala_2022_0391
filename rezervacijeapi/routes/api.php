@@ -88,7 +88,7 @@ Route::get('/init-db', function () {
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-
+/*
 Route::get('/init-db', function () {
     try {
         // Za PostgreSQL koristimo drugu metodu za isključivanje provere ključeva
@@ -102,5 +102,14 @@ Route::get('/init-db', function () {
         return "Baza (PostgreSQL) je uspesno osvezena i napunjena podacima!";
     } catch (\Exception $e) {
         return "Greska pri inicijalizaciji: " . $e->getMessage();
+    }
+});*/
+
+Route::get('/init-db', function () {
+    try {
+        Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+        return "Baza je uspesno osvezena!";
+    } catch (\Exception $e) {
+        return "Greska: " . $e->getMessage();
     }
 });
