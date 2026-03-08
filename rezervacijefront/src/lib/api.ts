@@ -288,7 +288,10 @@ deleteSala: async (id: any) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Greška pri brisanju sale");
+      //throw new Error(errorData.message || "Greška pri brisanju sale");
+      const error = new Error(errorData.message || "Greška pri brisanju sale") as any;
+      error.response = { data: errorData }; 
+      throw error;
     }
 
     return response.json();

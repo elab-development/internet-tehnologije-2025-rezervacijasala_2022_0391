@@ -28,25 +28,6 @@ class SalaApiTest extends TestCase
                  ->assertJsonPath('data.0.id', fn($id) => !is_null($id));
     }
 
-    /**
-     * Samo admin sme da doda novu salu.
-     */
+    
 
-    /*
-    public function test_admin_moze_da_doda_novu_salu()
-    {
-        $admin = User::factory()->create(['uloga' => 'administrator']);
-        
-        $novaSala = [
-            'naziv' => 'Sala 101',
-            'kapacitet' => 50,
-            'opis' => 'Nova sala sa projektorom'
-        ];
-
-        $response = $this->actingAs($admin, 'sanctum')
-                         ->postJson('/api/sale', $novaSala);
-
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('sale', ['naziv' => 'Sala 101']);
-    }*/
 }

@@ -19,6 +19,8 @@ export default function HomePage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [sveSale, setSveSale] = useState<Sala[]>([]);
   const [saleIzBaze, setSaleIzBaze] = useState<Sala[]>([]);
+  const [sviTipovi, setSviTipovi] = useState<TipDogadjaja[]>([]);
+  const [sveKarakteristike, setSveKarakteristike] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -42,13 +44,13 @@ export default function HomePage() {
 
   const tipoviIzBaze = useMemo(() => {
     // Proveravamo da li saleIzBaze uopšte postoji i da li je niz
-    if (!saleIzBaze || !Array.isArray(saleIzBaze)) {
+    if (!sveSale || !Array.isArray(sveSale)) {
       return [];
     }
 
     try {
       const map = new Map();
-      saleIzBaze.forEach((s) => {
+      sveSale.forEach((s) => {
         // Proveravamo da li sala ima tipove i da li su niz
         if (s && Array.isArray(s.tipovi_dogadjaja)) {
           s.tipovi_dogadjaja.forEach((t) => {
@@ -63,16 +65,16 @@ export default function HomePage() {
       console.error("Greška u tipoviIzBaze:", e);
       return [];
     }
-  }, [saleIzBaze]);
+  }, [sveSale]);
 
   const karakteristikeIzBaze = useMemo(() => {
-    if (!saleIzBaze || !Array.isArray(saleIzBaze)) {
+    if (!sveSale || !Array.isArray(sveSale)) {
       return [];
     }
 
     try {
       const map = new Map();
-      saleIzBaze.forEach((s) => {
+      sveSale.forEach((s) => {
         if (s && Array.isArray(s.karakteristike)) {
           s.karakteristike.forEach((k) => {
             if (k && k.id) map.set(k.id, k);
@@ -86,7 +88,7 @@ export default function HomePage() {
       console.error("Greška u karakteristikeIzBaze:", e);
       return [];
     }
-  }, [saleIzBaze]);
+  }, [sveSale]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -159,16 +161,26 @@ export default function HomePage() {
   ]);
 
   // Učitava sve sale samo kada se otvori modal
+  /*
   useEffect(() => {
     if (showDeleteModal) {
       api
-        .getAllSale() // Podrazumevam da ćeš dodati ovu metodu u api.ts
+        .getAllSale()
         .then((res: any) => {
           setSveSale(res);
         })
         .catch((err) => console.error("Greška pri učitavanju svih sala:", err));
     }
-  }, [showDeleteModal]);
+  }, [showDeleteModal]);  */
+
+  useEffect(() => {
+  api.getAllSale()
+    .then((res: any) => {
+      console.log("Sve sale su učitane za filtere:", res);
+      setSveSale(res);
+    })
+    .catch((err) => console.error("Greška pri učitavanju svih sala:", err));
+}, []);
 
   const resetujFiltere = () => {
     setTempKapacitet("sve");
@@ -228,6 +240,31 @@ export default function HomePage() {
       alert(error.message || "Greška pri rezervaciji.");
     }
   };
+
+
+
+
+
+
+  const obrisiSalu = async (id: any) => {
+  try {
+    
+    await api.deleteSala(id);
+    
+    setSveSale((prev) => prev.filter((s) => s.id !== Number(id)));
+    setSaleIzBaze((prev) => prev.filter((s) => s.id !== Number(id)));
+    
+    // Zatvaramo modal jer je uspeh
+    //setShowDeleteModal(false);
+  } catch (err) {
+    // Bacamo grešku dalje da bi je DeleteSalaModal uhvatio i prikazao crveni box
+    throw err;
+  }
+};
+
+
+
+
 
   const prikazaneSale = useMemo(() => {
     return saleIzBaze;
@@ -549,19 +586,7 @@ export default function HomePage() {
           <DeleteSalaModal
             sale={sveSale}
             onClose={() => setShowDeleteModal(false)}
-            onConfirm={async (id: any) => {
-              // <-- Ovde dodaj : any
-              try {
-                await api.deleteSala(id);
-                alert("Sala uspešno obrisana!");
-                setShowDeleteModal(false);
-
-                setSveSale((prev) => prev.filter((s) => s.id !== id));
-                setSaleIzBaze((prev) => prev.filter((s) => s.id !== id));
-              } catch (e) {
-                alert("Greška pri brisanju!");
-              }
-            }}
+            onConfirm={obrisiSalu}
           />
         )}
       </div>

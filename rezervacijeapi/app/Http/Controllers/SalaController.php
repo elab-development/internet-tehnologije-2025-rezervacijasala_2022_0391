@@ -20,9 +20,20 @@ class SalaController extends Controller
         $query = Sala::with(['tipovi_dogadjaja', 'karakteristike']);
 
         // 2. FILTRIRANJE PO NAZIVU (Search bar)
-        if ($request->has('search') && $request->search != '') {
+        /*if ($request->has('search') && $request->search != '') {
             $query->where('naziv', 'like', '%' . $request->search . '%');
+        }*/
+
+        // 2. FILTRIRANJE PO NAZIVU ILI LOKACIJI
+        //if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) { // 'filled' proverava da li ključ postoji I da nije prazan
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('naziv', 'like', '%' . $searchTerm . '%')
+                ->orWhere('lokacija', 'like', '%' . $searchTerm . '%');
+            });
         }
+       
 
         // 3. FILTRIRANJE PO KAPACITETU
         if ($request->has('kapacitet') && $request->kapacitet != 'sve') {
@@ -100,12 +111,13 @@ class SalaController extends Controller
             'lokacija' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'slike' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'slike' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
 
         $podaci = $validator->validated();
 
@@ -115,6 +127,11 @@ class SalaController extends Controller
             $podaci['slike'] = $putanja;
         }
 
+        if ($request->hasFile('slike')) {
+    $path = $request->file('slike')->store('slike', 'public');
+    // OVA LINIJA ĆE ZAUSTAVITI SVE I REĆI TI ŠTA SE DESILO
+    //return response()->json(['debug_putanja' => $path, 'podaci_za_bazu' => $podaci]);
+}
         $sala = Sala::create($podaci);
 
         // POVEZIVANJE SA KARAKTERISTIKAMA I TIPOVIMA 
@@ -204,17 +221,46 @@ class SalaController extends Controller
      */
 
     public function destroy($id)
-{
+    {
+    /*
+    $sala = Sala::find($id);
+    if (!$sala) {
+        return response()->json(['message' => 'Sala nije pronađena'], 404);
+    }
+    $sala->delete();
+
+    return response()->json(['message' => 'Sala uspešno obrisana!'], 200);  */
+    
     $sala = Sala::find($id);
 
     if (!$sala) {
         return response()->json(['message' => 'Sala nije pronađena'], 404);
     }
 
+    // Provera rezervacija: statusi 'potvrdjena' ILI 'u_toku'
+    // Dodatno proveravamo i vreme da budemo sigurni
+    $imaAktivneRezervacije = $sala->rezervacije()
+        ->where(function($query) {
+            $query->whereIn('status', ['potvrdjena', 'u_toku'])
+                  ->orWhere(function($q) {
+                      $now = now();
+                      $q->where('pocetak', '<=', $now)
+                        ->where('kraj', '>=', $now);
+                  });
+        })->exists();
+
+    if ($imaAktivneRezervacije) {
+        return response()->json([
+            'error' => 'nemoze_brisanje',
+            'message' => 'Nije moguće obrisati salu jer ima potvrđene rezervacije ili su događaji u toku!'
+        ], 400); 
+    }
+
     $sala->delete();
 
     return response()->json(['message' => 'Sala uspešno obrisana!'], 200);
-}
+
+    }
 
 
     public function all()
