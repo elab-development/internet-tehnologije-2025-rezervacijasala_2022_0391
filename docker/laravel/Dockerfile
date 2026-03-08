@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y \
 
 
     # Pokrećemo ugrađeni PHP server (za Render port 10000 je standard)
-    CMD php artisan serve --host=0.0.0.0 --port=10000
+    # menjam liniju: CMD php artisan serve --host=0.0.0.0 --port=10000
+    CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
 
 
     # dodala sam libpq-dev u ovom RUN-u prvom i pdo_pgsql u redu ispod
