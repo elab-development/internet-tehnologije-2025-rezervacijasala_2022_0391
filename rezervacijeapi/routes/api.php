@@ -67,4 +67,20 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     });
+
+
+
+});
+
+
+#za punjenje baze u renderu
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/init-db', function () {
+    try {
+        Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+        return "Baza je uspesno osvezena i napunjena podacima!";
+    } catch (\Exception $e) {
+        return "Greska pri inicijalizaciji: " . $e->getMessage();
+    }
 });
