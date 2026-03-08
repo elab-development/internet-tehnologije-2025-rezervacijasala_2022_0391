@@ -1,5 +1,5 @@
 
-const BASE_URL = (import.meta as any).env.VITE_API_URL || "http://localhost:8080/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
 export const api = {
   getSale: async (page: number = 1, params: any = {}, options: any = {}) => {
