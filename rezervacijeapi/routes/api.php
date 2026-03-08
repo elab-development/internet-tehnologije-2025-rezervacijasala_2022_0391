@@ -105,11 +105,28 @@ Route::get('/init-db', function () {
     }
 });*/
 
+use Illuminate\Support\Facades\Schema;
+
 Route::get('/init-db', function () {
     try {
-        Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
-        return "Baza je uspesno osvezena!";
+        // 1. Onemogućavamo provere stranih ključeva na nivou sesije za PostgreSQL
+        DB::statement('SET session_replication_role = "replica";');
+
+        // 2. Brišemo sve tabele ručno da izbegnemo "foreign_key_checks" grešku
+        $tables = DB::select('SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = \'public\'');
+        foreach ($tables as $table) {
+            DB::statement('DROP TABLE IF EXISTS ' . $table->tablename . ' CASCADE');
+        }
+
+        // 3. Vraćamo provere ključeva na normalu
+        DB::statement('SET session_replication_role = "origin";');
+
+        // 4. Pokrećemo čiste migracije i seeder
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('db:seed', ['--force' => true]);
+
+        return "PostgreSQL baza je uspesno RESTARTOVANA i napunjena podacima!";
     } catch (\Exception $e) {
-        return "Greska: " . $e->getMessage();
+        return "Greska pri inicijalizaciji: " . $e->getMessage();
     }
 });
