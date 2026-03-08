@@ -23,7 +23,11 @@ export default function AdminKorisniciPage() {
     try {
       setLoading(true);
       const data = await api.getUsers(); // Poziva tvoju Route::get('users'...)
-      setKorisnici(data);
+      //const samoObicniKorisnici = data.filter((user: any) => user.uloga !== 'administrator');
+
+      //setKorisnici(samoObicniKorisnici);
+      const filtrirano = data.filter((u: any) => false); 
+setKorisnici(filtrirano);
     } catch (error) {
       console.error("Greška pri učitavanju korisnika:", error);
     } finally {
