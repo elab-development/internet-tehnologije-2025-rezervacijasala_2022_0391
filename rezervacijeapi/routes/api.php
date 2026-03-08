@@ -107,6 +107,7 @@ Route::get('/init-db', function () {
 
 use Illuminate\Support\Facades\Schema;
 
+/*
 Route::get('/init-db', function () {
     try {
         // 1. Onemogućavamo provere stranih ključeva na nivou sesije za PostgreSQL
@@ -126,6 +127,26 @@ Route::get('/init-db', function () {
         Artisan::call('db:seed', ['--force' => true]);
 
         return "PostgreSQL baza je uspesno RESTARTOVANA i napunjena podacima!";
+    } catch (\Exception $e) {
+        return "Greska pri inicijalizaciji: " . $e->getMessage();
+    }
+}); */
+
+Route::get('/init-db', function () {
+    try {
+        // 1. Brišemo celu 'public' šemu i pravimo je ponovo
+        // Ovo je najbrži način da se obrišu sve tabele bez brige o ključevima
+        DB::statement('DROP SCHEMA public CASCADE');
+        DB::statement('CREATE SCHEMA public');
+        DB::statement('GRANT ALL ON SCHEMA public TO public');
+        
+        // 2. Pokrećemo migracije
+        Artisan::call('migrate', ['--force' => true]);
+        
+        // 3. Pokrećemo seeder
+        Artisan::call('db:seed', ['--force' => true]);
+
+        return "Baza je uspesno REKREIRANA i napunjena podacima!";
     } catch (\Exception $e) {
         return "Greska pri inicijalizaciji: " . $e->getMessage();
     }
