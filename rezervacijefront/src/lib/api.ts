@@ -277,7 +277,7 @@ export const api = {
 
 deleteSala: async (id: any) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(`${BASE_URL}sale/${id}`, {
+    const response = await fetch(`${BASE_URL}/sale/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,
