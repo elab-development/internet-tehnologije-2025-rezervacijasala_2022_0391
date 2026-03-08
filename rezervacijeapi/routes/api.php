@@ -74,12 +74,32 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 #za punjenje baze u renderu
+/*
 use Illuminate\Support\Facades\Artisan;
 
 Route::get('/init-db', function () {
     try {
         Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
         return "Baza je uspesno osvezena i napunjena podacima!";
+    } catch (\Exception $e) {
+        return "Greska pri inicijalizaciji: " . $e->getMessage();
+    }
+}); */
+
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+
+Route::get('/init-db', function () {
+    try {
+        // Za PostgreSQL koristimo drugu metodu za isključivanje provere ključeva
+        DB::statement('SET CONSTRAINTS ALL DEFERRED');
+        
+        Artisan::call('migrate:fresh', [
+            '--seed' => true, 
+            '--force' => true
+        ]);
+        
+        return "Baza (PostgreSQL) je uspesno osvezena i napunjena podacima!";
     } catch (\Exception $e) {
         return "Greska pri inicijalizaciji: " . $e->getMessage();
     }
