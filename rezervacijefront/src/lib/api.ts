@@ -1,5 +1,5 @@
 
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = (import.meta as any).env.VITE_API_URL || "http://localhost:8080/api";
 
 export const api = {
   getSale: async (page: number = 1, params: any = {}, options: any = {}) => {
@@ -94,7 +94,7 @@ export const api = {
   },
 
   register: async (podaci: any) => {
-    const response = await fetch("http://localhost:8080/api/register", {
+    const response = await fetch(`${BASE_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +118,7 @@ export const api = {
   otkaziRezervaciju: async (id: number) => {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:8080/api/rezervacije/${id}/otkazi`,
+      `${BASE_URL}/rezervacije/${id}/otkazi`,
       {
         method: "PUT",
         headers: {
@@ -277,7 +277,7 @@ export const api = {
 
 deleteSala: async (id: any) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:8080/api/sale/${id}`, {
+    const response = await fetch(`${BASE_URL}sale/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,
