@@ -2,7 +2,7 @@ name: Laravel CI
 
 on:
   push:
-    branches: [ "feature/tests", "develop", "main" ]
+  #  branches: [ "feature/tests", "develop", "main" ]
   pull_request:
     branches: [ "develop" ]
 

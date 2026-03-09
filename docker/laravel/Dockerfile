@@ -10,22 +10,13 @@ RUN apt-get update && apt-get install -y \
 
     WORKDIR /var/www
    
-    # DODAJ OVO:
-    # Kopiramo ceo folder rezervacijeapi u /var/www
+   
     COPY ./rezervacijeapi /var/www
 
-    # Instaliramo zavisnosti (bez dev paketa radi brzine)
     RUN composer install --no-dev --optimize-autoloader
 
-    # Podešavamo dozvole za Laravel foldere
 
-    #ovde sam sad dodala /bootstrap u liniji ispod
     RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-
-    # Pokrećemo ugrađeni PHP server (za Render port 10000 je standard)
-    # menjam liniju: CMD php artisan serve --host=0.0.0.0 --port=10000
     CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
 
-
-    # dodala sam libpq-dev u ovom RUN-u prvom i pdo_pgsql u redu ispod
