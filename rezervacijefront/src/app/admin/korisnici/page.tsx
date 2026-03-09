@@ -23,7 +23,10 @@ export default function AdminKorisniciPage() {
     try {
       setLoading(true);
       const data = await api.getUsers(); // Poziva tvoju Route::get('users'...)
-      setKorisnici(data);
+      console.log("PODACI STIGLI:", data);
+      const obicniKorisnici = data.filter((u: any) => u.role === 'ulogovan');
+      console.log("OBICNI KORISNICI:", obicniKorisnici);
+      setKorisnici(obicniKorisnici);
     } catch (error) {
       console.error("Greška pri učitavanju korisnika:", error);
     } finally {
