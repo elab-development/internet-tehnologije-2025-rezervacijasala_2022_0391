@@ -17,13 +17,12 @@ class SalaApiTest extends TestCase
      */
     public function test_svako_moze_da_vidi_listu_sala()
     {
-        // 1. Kreiramo 3 sale u bazi
+        // Kreiramo 3 sale u bazi
         Sala::factory()->count(3)->create();
 
-        // 2. Pozivamo API endpoint
+        //Pozivamo API endpoint
         $response = $this->getJson('/api/sale');
 
-        // 3. Provera statusa i strukture (mora vratiti 200 i listu)
         $response->assertStatus(200)
                  ->assertJsonPath('data.0.id', fn($id) => !is_null($id));
     }

@@ -132,13 +132,18 @@ export default function DodajSalu() {
 
         {/* KAPACITET */}
         <input
-          type="number"
-          min="1"
+          type="text" 
+          inputMode="numeric" 
           placeholder="Kapacitet (broj osoba) *"
           className={`w-full p-3 border ${errors.kapacitet ? 'border-red-500' : 'border-pink-200'} mb-4 rounded-xl outline-none focus:border-pink-500`}
-          onChange={(e) =>{
-            setFormData({ ...formData, kapacitet: e.target.value });
-            if(errors.kapacitet) setErrors({...errors, kapacitet: ""});
+          value={formData.kapacitet || ''}
+          onChange={(e) => {
+            const value = e.target.value;
+            // Dozvoljava samo brojeve (prazan string ili cifre)
+            if (value === '' || /^[0-9\b]+$/.test(value)) {
+              setFormData({ ...formData, kapacitet: value });
+              if(errors.kapacitet) setErrors({...errors, kapacitet: ""});
+            }
           }}
         />
         <ErrorMsg name="kapacitet" />
@@ -163,25 +168,52 @@ export default function DodajSalu() {
         <ErrorMsg name="lokacija" />
 
         <input
-          type="number"
-          step="any"
-          placeholder="Geografska širina (Latitude) *"
-          className={`w-full p-3 border ${errors.latitude ? 'border-red-500' : 'border-pink-200'} mb-4 rounded-xl outline-none focus:border-pink-500`}
-          onChange={(e) =>{
-                    setFormData({ ...formData, latitude: e.target.value });
+                type="text"
+                inputMode="decimal"
+                placeholder="Geografska širina (Latitude) *"
+                className={`w-full p-3 border ${errors.latitude ? 'border-red-500' : 'border-pink-200'} mb-4 rounded-xl outline-none focus:border-pink-500`}
+                value={formData.latitude || ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  // Dozvoljava samo brojeve, jednu tačku i jedan minus na početku
+                  if (val === '' || val === '-' || /^-?\d*\.?\d*$/.test(val)) {
+                    setFormData({ ...formData, latitude: val });
                     if(errors.latitude) setErrors({...errors, latitude: ""});
+                  }
                 }}
-        />
+                onBlur={(e) => {
+                  // Provera opsega (-90 do 90)
+                  let num = parseFloat(e.target.value);
+                  if (!isNaN(num)) {
+                    if (num > 90) num = 90;
+                    if (num < -90) num = -90;
+                    setFormData({ ...formData, latitude: num.toString() });
+                  }
+                }}
+              />
         <input
-          type="number"
-          step="any"
-          placeholder="Geografska dužina (Longitude) *"
-          className={`w-full p-3 border ${errors.longitude ? 'border-red-500' : 'border-pink-200'} mb-4 rounded-xl outline-none focus:border-pink-500`}
-          onChange={(e) =>{
-                    setFormData({ ...formData, longitude: e.target.value });
-                    if(errors.longitude) setErrors({...errors, longitude: ""});
-                }}
-        />
+            type="text" 
+            inputMode="decimal"
+            placeholder="Geografska dužina (Longitude) *"
+            className={`w-full p-3 border ${errors.longitude ? 'border-red-500' : 'border-pink-200'} mb-4 rounded-xl outline-none focus:border-pink-500`}
+            value={formData.longitude || ''}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '' || val === '-' || /^-?\d*\.?\d*$/.test(val)) {
+                setFormData({ ...formData, longitude: val });
+                if(errors.longitude) setErrors({...errors, longitude: ""});
+              }
+            }}
+            onBlur={(e) => {
+              // Provera opsega (-180 do 180)
+              let num = parseFloat(e.target.value);
+              if (!isNaN(num)) {
+                if (num > 180) num = 180;
+                if (num < -180) num = -180;
+                setFormData({ ...formData, longitude: num.toString() });
+              }
+            }}
+          />
 
         {/* KARAKTERISTIKE */}
         <div className="mb-6 border border-pink-100 p-4 rounded-xl bg-white/50">

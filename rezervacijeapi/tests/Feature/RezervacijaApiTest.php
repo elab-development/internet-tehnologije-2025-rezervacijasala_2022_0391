@@ -21,7 +21,7 @@ class RezervacijaApiTest extends TestCase
         
         \Illuminate\Support\Facades\DB::table('tipovidogadjaja')->insert([
         'id' => 1,
-        'naziv' => 'Test Tip', // Proveri da li se kolona zove 'naziv' ili 'ime'
+        'naziv' => 'Test Tip',
     ]);
         // Prva rezervacija
         Rezervacija::create([
