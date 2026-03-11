@@ -1,4 +1,9 @@
+#*
+#!private/
+#!public/
+#!.gitignore
 *
-!private/
-!public/
 !.gitignore
+!public/
+!private/
+!storage/

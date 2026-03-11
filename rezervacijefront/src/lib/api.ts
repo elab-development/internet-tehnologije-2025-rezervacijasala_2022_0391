@@ -1,5 +1,6 @@
 
-const BASE_URL = "http://localhost:8080/api";
+//const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const BASE_URL = "https://rezervacije-back.onrender.com/api";
 
 export const api = {
   getSale: async (page: number = 1, params: any = {}, options: any = {}) => {
@@ -34,7 +35,7 @@ export const api = {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          ...options.headers, // OVO JE KLJUČ: spaja tvoje default hedere sa onima koje pošalješ
+          ...options.headers, 
         },
       });
 
@@ -76,7 +77,9 @@ export const api = {
   async login(podaci: { email: string; password: string }) {
     const res = await fetch(`${BASE_URL}/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+        "Accept": "application/json"    //dodala zbog deploya na front?
+      },
       body: JSON.stringify({
         email: podaci.email, // Ključ koji Laravel Validator traži
         password: podaci.password, // Ključ koji Laravel Validator traži
@@ -84,17 +87,21 @@ export const api = {
     });
 
     if (!res.ok) {
-      const errorData = await res.json();
+      const errorData = await res.json().catch(() => null); // Pokušaj da pročitaš JSON
       // Ako Laravel baci 422 (validacija), greška je u errorData.errors
       // Ako baci 401 (pogrešni podaci), greška je u errorData.message
-      throw new Error(errorData.poruka || "Pogrešni podaci");
+      if (errorData) {
+       console.error("SERVER ODGOVOR:", errorData);
+       throw new Error(errorData.message || errorData.poruka || "Greška na serveru");
+    }
+      throw new Error("Server je vratio HTML grešku umesto JSON-a. Proveri logove na Renderu.");
     }
 
     return res.json(); // Vraća korisnika iz baze
   },
 
   register: async (podaci: any) => {
-    const response = await fetch("http://localhost:8080/api/register", {
+    const response = await fetch(`${BASE_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +125,7 @@ export const api = {
   otkaziRezervaciju: async (id: number) => {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:8080/api/rezervacije/${id}/otkazi`,
+      `${BASE_URL}/rezervacije/${id}/otkazi`,
       {
         method: "PUT",
         headers: {
@@ -277,7 +284,7 @@ export const api = {
 
 deleteSala: async (id: any) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:8080/api/sale/${id}`, {
+    const response = await fetch(`${BASE_URL}/sale/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,

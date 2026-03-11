@@ -2,9 +2,10 @@ name: Laravel CI
 
 on:
   push:
-    #branches: [ "feature/*", "develop", "main" ]
+
+  #  branches: [ "feature/tests", "develop", "main" ]
   pull_request:
-    branches: [ "develop", "main" ]
+    branches: [ "develop" , "main"]
 
 jobs:
   laravel-tests:
@@ -63,10 +64,10 @@ jobs:
 
       - name: Build Backend Image
         run: |
-          docker build -t moj-projekat-backend:latest -f docker/laravel/Dockerfile ./rezervacijeapi
+          docker build -t moj-projekat-backend:latest -f docker/laravel/Dockerfile .
           echo "Backend image built successfully!"
 
       - name: Build Frontend Image
         run: |
-          docker build -t moj-projekat-frontend:latest -f rezervacijefront/Dockerfile ./rezervacijefront
+          docker build -t moj-projekat-frontend:latest -f rezervacijefront/Dockerfile .
           echo "Frontend image built successfully!"

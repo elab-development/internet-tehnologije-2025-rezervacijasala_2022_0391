@@ -79,7 +79,7 @@ export default function DodajSalu() {
    
     try {
       // 2. Dodaj 'Authorization' zaglavlje
-      await axios.post("http://localhost:8080/api/sale", data, {
+      await axios.post("https://rezervacije-back.onrender.com/api/sale", data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`, 

@@ -23,21 +23,21 @@ export default function SalaCard({
   // odakle se vuče slika
 
 const getImageUrl = (slike: string | null | undefined) => {
-  // 1. Ako nema slike, vrati placeholder
+  
   if (!slike) return "/slike/placeholder.jpg";
 
-  // 2. Ako vec ima http, to je sigurno novi Laravel sistem
   if (slike.startsWith("http")) return slike;
 
-  // 3. TRIK ZA STARE SLIKE:
-  // Ako slika ne sadrzi kosu crtu, to znaci da je to staro ime fajla iz React foldera
-  // (jer  nove slike iz Laravela treba da budu u formatu "slike/ime.jpg")
+  const backendBase = typeof window !== "undefined" && window.location.hostname.includes("onrender.com")
+    ? "https://rezervacije-back.onrender.com"
+    : "http://localhost:8080";
+ 
   if (!slike.includes("/")) {
     return `/slike/${slike}`; // Vraća /slike/konfverencijskaSala.jpg
   }
 
   // 4. Ako sadrži kosu crtu, to je Laravel putanja 
-  return `http://localhost:8080/storage/${slike}`;
+  return `${backendBase}/storage/${slike}`;
 };
 
   
