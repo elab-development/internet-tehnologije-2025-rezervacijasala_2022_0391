@@ -34,7 +34,7 @@ export const api = {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          ...options.headers, // OVO JE KLJUČ: spaja tvoje default hedere sa onima koje pošalješ
+          ...options.headers, 
         },
       });
 

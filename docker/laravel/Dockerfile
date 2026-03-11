@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     WORKDIR /var/www
    
    
-    COPY ./rezervacijeapi /var/www
+    #COPY ./rezervacijeapi /var/www
+    COPY ./var/www
 
     RUN composer install --no-dev --optimize-autoloader
 
