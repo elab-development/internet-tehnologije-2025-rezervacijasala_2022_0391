@@ -1,5 +1,6 @@
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+//const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const BASE_URL = "https://rezervacije-back.onrender.com/api";
 
 export const api = {
   getSale: async (page: number = 1, params: any = {}, options: any = {}) => {
@@ -76,7 +77,9 @@ export const api = {
   async login(podaci: { email: string; password: string }) {
     const res = await fetch(`${BASE_URL}/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+        "Accept": "application/json"    //dodala zbog deploya na front?
+      },
       body: JSON.stringify({
         email: podaci.email, // Ključ koji Laravel Validator traži
         password: podaci.password, // Ključ koji Laravel Validator traži
@@ -84,10 +87,14 @@ export const api = {
     });
 
     if (!res.ok) {
-      const errorData = await res.json();
+      const errorData = await res.json().catch(() => null); // Pokušaj da pročitaš JSON
       // Ako Laravel baci 422 (validacija), greška je u errorData.errors
       // Ako baci 401 (pogrešni podaci), greška je u errorData.message
-      throw new Error(errorData.poruka || "Pogrešni podaci");
+      if (errorData) {
+       console.error("SERVER ODGOVOR:", errorData);
+       throw new Error(errorData.message || errorData.poruka || "Greška na serveru");
+    }
+      throw new Error("Server je vratio HTML grešku umesto JSON-a. Proveri logove na Renderu.");
     }
 
     return res.json(); // Vraća korisnika iz baze
