@@ -40,6 +40,9 @@ export default function HomePage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedSala, setSelectedSala] = useState<Sala | null>(null);
 
+  const [tempSearch, setTempSearch] = useState("");
+
+
   // Koristimo useMemo da bismo bezbedno izvukli tipove samo kada sale stignu
 
   const tipoviIzBaze = useMemo(() => {
@@ -89,6 +92,11 @@ export default function HomePage() {
       return [];
     }
   }, [sveSale]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  setSearchQuery(tempSearch); 
+};
 
   useEffect(() => {
     setCurrentPage(1);
@@ -401,32 +409,27 @@ export default function HomePage() {
               </div>
             )}
           </div>
-          {/* --- POLJE ZA PRETRAGU --- */}
-          <div className="relative w-64 md:w-80">
-            <input
-              type="text"
-              placeholder="Pretraži sale ili lokacije..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-50 bg-gray-50/50 focus:bg-white focus:border-pink-200 outline-none transition-all text-sm font-medium text-pink-950"
-            />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            {/* --- POLJE ZA PRETRAGU --- */}
+            <form onSubmit={handleSearchSubmit} className="relative w-64 md:w-80 flex gap-2">
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  placeholder="Pretraži sale ili lokacije..."
+                  value={tempSearch} // PROMENA: sada koristiš tempSearch
+                  onChange={(e) => setTempSearch(e.target.value)} // PROMENA: ažuriraš tempSearch
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-50 bg-gray-50/50 focus:bg-white focus:border-pink-200 outline-none transition-all text-sm font-medium text-pink-950"
+                />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-300">
+                  <Search size={16} />
+                </div>
+              </div>
+              <button 
+                type="submit"
+                className="bg-pink-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-pink-700 transition-all shadow-md active:scale-95"
               >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </div>
-          </div>
+                Traži
+              </button>
+            </form>
           {/* SORTIRANJE */}
           <div className="flex items-center gap-4 border-l border-pink-50 pl-10">
             <label className="text-[10px] font-black uppercase tracking-widest text-pink-400">

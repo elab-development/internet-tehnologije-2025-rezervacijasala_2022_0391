@@ -27,10 +27,12 @@ class SalaController extends Controller
         // 2. FILTRIRANJE PO NAZIVU ILI LOKACIJI
         //if ($request->has('search') && $request->search != '') {
         if ($request->filled('search')) { // 'filled' proverava da li ključ postoji I da nije prazan
-            $searchTerm = $request->search;
+            $searchTerm = strtolower($request->search);
             $query->where(function($q) use ($searchTerm) {
-                $q->where('naziv', 'like', '%' . $searchTerm . '%')
-                ->orWhere('lokacija', 'like', '%' . $searchTerm . '%');
+              /*  $q->where('naziv', 'like', '%' . $searchTerm . '%')
+                ->orWhere('lokacija', 'like', '%' . $searchTerm . '%'); */
+                $q->whereRaw('LOWER(naziv) like ?', ['%' . $searchTerm . '%'])
+                ->orWhereRaw('LOWER(lokacija) like ?', ['%' . $searchTerm . '%']);
             });
         }
        
