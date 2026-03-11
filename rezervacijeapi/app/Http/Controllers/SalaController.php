@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sala;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class SalaController extends Controller
 {
@@ -13,22 +14,83 @@ class SalaController extends Controller
      */
     //prikaz svih sala
 
-//STARA INDEX FUNKCIJA
-
-    /*public function index()
+    public function index(Request $request)
     {
-        $sale = Sala::all();
+        // 1. ZAPOCINJEMO UPIT RELACIJAMA
+        $query = Sala::with(['tipovi_dogadjaja', 'karakteristike']);
+
+        // 2. FILTRIRANJE PO NAZIVU (Search bar)
+        /*if ($request->has('search') && $request->search != '') {
+            $query->where('naziv', 'like', '%' . $request->search . '%');
+        }*/
+
+        // 2. FILTRIRANJE PO NAZIVU ILI LOKACIJI
+        //if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) { // 'filled' proverava da li ključ postoji I da nije prazan
+            $searchTerm = strtolower($request->search);
+            $query->where(function($q) use ($searchTerm) {
+              /*  $q->where('naziv', 'like', '%' . $searchTerm . '%')
+                ->orWhere('lokacija', 'like', '%' . $searchTerm . '%'); */
+                $q->whereRaw('LOWER(naziv) like ?', ['%' . $searchTerm . '%'])
+                ->orWhereRaw('LOWER(lokacija) like ?', ['%' . $searchTerm . '%']);
+            });
+        }
+       
+
+        // 3. FILTRIRANJE PO KAPACITETU
+        if ($request->has('kapacitet') && $request->kapacitet != 'sve') {
+            if ($request->kapacitet == 'do50') {
+                $query->where('kapacitet', '<=', 50);
+            } elseif ($request->kapacitet == '50-100') {
+                $query->whereBetween('kapacitet', [50, 100]);
+            } elseif ($request->kapacitet == '100-200') {
+                $query->whereBetween('kapacitet', [100, 200]);
+            } elseif ($request->kapacitet == '200-300') {
+                $query->whereBetween('kapacitet', [200, 300]);
+            } elseif ($request->kapacitet == '300plus') {
+                $query->where('kapacitet', '>', 300);
+            }
+        }
+
+        // FILTRIRANJE PO TIPOVIMA DOGAĐAJA 
+        if ($request->has('tipovi') && !empty($request->tipovi)) {
+            $tipoviIds = is_array($request->tipovi) ? $request->tipovi : explode(',', $request->tipovi);
+            $query->whereHas('tipovi_dogadjaja', function ($q) use ($tipoviIds) {
+                $q->whereIn('tipovidogadjaja.id', $tipoviIds);
+            });
+        }
+
+        // FILTRIRANJE PO KARAKTERISTIKAMA 
+        if ($request->has('karakteristike') && !empty($request->karakteristike)) {
+            $karakteristikeIds = is_array($request->karakteristike) ? $request->karakteristike : explode(',', $request->karakteristike);
+
+            foreach ($karakteristikeIds as $id) {
+                $query->whereHas('karakteristike', function ($q) use ($id) {
+                    $q->where('karakteristike.id', $id);
+                });
+            }
+        }
+
+        // 4. SORTIRANJE 
+        if ($request->has('sort')) {
+            if ($request->sort == 'az') {
+                $query->orderBy('naziv', 'asc');
+            } elseif ($request->sort == 'za') {
+                $query->orderBy('naziv', 'desc');
+            } elseif ($request->sort == 'kapacitet_asc') {
+                $query->orderBy('kapacitet', 'asc');
+            } elseif ($request->sort == 'kapacitet_desc') {
+                $query->orderBy('kapacitet', 'desc');
+            }
+        } else {
+            $query->orderBy('id', 'asc');
+        }
+
+        // 5. PAGINACIJA 
+        $sale = $query->paginate(6);
+
         return response()->json($sale);
-    }*/
-
-
-    public function index()
-{
-    // Povlačimo sve sale, ali i njihove relacije koje smo definisali u modelu
-    $sale = Sala::with(['tipovi_dogadjaja', 'karakteristike'])->get();  //tipoviDogadjaja i karakteristike su metode u modelu Sala, ne tabele!
-    
-    return response()->json($sale);
-}
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -43,51 +105,66 @@ class SalaController extends Controller
      */
     //dodavanje nove sale
     public function store(Request $request)
-    {//$validator = Validator::make($request->all()
+    {
         $validator = Validator::make($request->all(), [
             'naziv' => 'required|string|max:255',
             'kapacitet' => 'required|integer|min:1',
             'opis' => 'nullable|string',
             'lokacija' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'slike' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $sala = Sala::create($validator->validated());
+
+        $podaci = $validator->validated();
+
+        // OBRADA SLIKE
+        if ($request->hasFile('slike')) {
+            $putanja = $request->file('slike')->store('slike', 'public');
+            $podaci['slike'] = $putanja;
+        }
+
+        if ($request->hasFile('slike')) {
+    $path = $request->file('slike')->store('slike', 'public');
+    // OVA LINIJA ĆE ZAUSTAVITI SVE I REĆI TI ŠTA SE DESILO
+    //return response()->json(['debug_putanja' => $path, 'podaci_za_bazu' => $podaci]);
+}
+        $sala = Sala::create($podaci);
+
+        // POVEZIVANJE SA KARAKTERISTIKAMA I TIPOVIMA 
+        if ($request->has('karakteristike')) {
+
+            $sala->karakteristike()->sync($request->input('karakteristike'));
+        }
+
+        if ($request->has('tipovi_dogadjaja')) {
+            $sala->tipovi_dogadjaja()->sync($request->input('tipovi_dogadjaja'));
+        }
 
         return response()->json([
             'message' => 'Sala je uspešno kreirana!',
-            'sala' => $sala
+            'sala' => $sala->load(['karakteristike', 'tipovi_dogadjaja'])
         ], 201);
     }
-    
+
 
     /**
      * Display the specified resource.
      */
     public function show($id)
-    {/*
-        $sala = Sala::with(['karakteristike', 'dozvoljeniTipoviDogadjaja'])->find($id);
+    {
+        $sala = Sala::with(['karakteristike', 'tipovi_dogadjaja'])->find($id);
 
-    if (!$sala) {
-        return response()->json(['message' => 'Sala nije pronađena'], 404);
-    }
+        if (!$sala) {
+            return response()->json(['message' => 'Sala nije pronadjena'], 404);
+        }
 
-    return response()->json($sala);*/
-
-    // VISE NE OVO
-    //$sala = Sala::find($id);
-
-    //NEGO OVO
-    $sala = Sala::with(['karakteristike', 'tipovi_dogadjaja'])->find($id);
-
-    if (!$sala) {
-        return response()->json(['message' => 'Sala nije pronadjena'], 404);
-    }
-
-    return response()->json($sala, 200);
+        return response()->json($sala, 200);
     }
 
     /**
@@ -105,12 +182,28 @@ class SalaController extends Controller
     {
         $sala = Sala::find($id);
 
-         if (!$sala) {
+        if (!$sala) {
             return response()->json(['message' => 'Sala nije pronađena'], 404);
         }
 
-        $sala->update($request->only(['naziv', 'opis', 'kapacitet', 'lokacija', 'slike']));
- 
+        // 1. Obrada teksta 
+        $podaci = $request->only(['naziv', 'opis', 'kapacitet', 'lokacija', 'latitude', 'longitude']);
+
+        // 2. Obrada slike (ako je poslata nova)
+        if ($request->hasFile('slike')) {
+            if ($sala->slike) {
+                Storage::disk('public')->delete($sala->slike);
+            }
+
+            // cuvanje nove slike
+            $putanja = $request->file('slike')->store('slike', 'public');
+            $podaci['slike'] = $putanja;
+        }
+
+        // azuriraj salu
+        $sala->update($podaci);
+
+        // 3. Sync relacija
         if ($request->has('karakteristike')) {
             $sala->karakteristike()->sync($request->input('karakteristike'));
         }
@@ -128,18 +221,54 @@ class SalaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {/** @var Sala $sala */
-    $sala = Sala::find($id);
 
-    
+    public function destroy($id)
+    {
+    /*
+    $sala = Sala::find($id);
     if (!$sala) {
-        return response()->json(['message' => 'Sala nije pronađena u bazi'], 404);
+        return response()->json(['message' => 'Sala nije pronađena'], 404);
     }
     $sala->delete();
-   
-    return response()->json([
-        'message' => 'Sala je uspešno obrisana!'
-    ], 200);
+
+    return response()->json(['message' => 'Sala uspešno obrisana!'], 200);  */
+    
+    $sala = Sala::find($id);
+
+    if (!$sala) {
+        return response()->json(['message' => 'Sala nije pronađena'], 404);
+    }
+
+    // Provera rezervacija: statusi 'potvrdjena' ILI 'u_toku'
+    // Dodatno proveravamo i vreme da budemo sigurni
+    $imaAktivneRezervacije = $sala->rezervacije()
+        ->where(function($query) {
+            $query->whereIn('status', ['potvrdjena', 'u_toku'])
+                  ->orWhere(function($q) {
+                      $now = now();
+                      $q->where('pocetak', '<=', $now)
+                        ->where('kraj', '>=', $now);
+                  });
+        })->exists();
+
+    if ($imaAktivneRezervacije) {
+        return response()->json([
+            'error' => 'nemoze_brisanje',
+            'message' => 'Nije moguće obrisati salu jer ima potvrđene rezervacije ili su događaji u toku!'
+        ], 400); 
+    }
+
+    $sala->delete();
+
+    return response()->json(['message' => 'Sala uspešno obrisana!'], 200);
+
+    }
+
+
+    public function all()
+    {
+        // Vraćamo sve sale, možda želiš da dodaš i relacije ako su ti potrebne
+        $sale = \App\Models\Sala::with(['tipovi_dogadjaja', 'karakteristike'])->get();
+        return response()->json($sale);
     }
 }

@@ -14,7 +14,9 @@ class Sala extends Model
         'kapacitet',
         'opis',
         'lokacija',
-        'slike'
+        'slike',
+        'latitude',   
+        'longitude'
     ];
 
     /*protected $casts = [
