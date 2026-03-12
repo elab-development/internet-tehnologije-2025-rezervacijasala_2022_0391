@@ -6,10 +6,14 @@
     "description": "Dokumentacija za Laravel Backend API sistem rezervacija sala"
   },
   "servers": [
-    {
-      "url": "http://localhost:8080/api",
-      "description": "Lokalni razvojni server (Laravel)"
-    }
+  {
+    "url": "https://tvoj-backend-na-renderu.com/api",
+    "description": "Produkcioni server (Render)"
+  },
+  {
+    "url": "http://localhost:8080/api",
+    "description": "Lokalni razvojni server"
+  }
   ],
   "components": {
     "securitySchemes": {
