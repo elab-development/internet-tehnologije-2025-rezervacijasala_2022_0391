@@ -7,7 +7,7 @@
   },
   "servers": [
   {
-    "url": "https://internet-tehnologije-2025-z86d.onrender.com/api",
+    "url": "https://rezervacije-back.onrender.com",
     "description": "Produkcioni server (Render)"
   },
   {
