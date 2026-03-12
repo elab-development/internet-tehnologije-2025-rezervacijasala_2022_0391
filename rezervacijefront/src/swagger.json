@@ -7,7 +7,7 @@
   },
   "servers": [
   {
-    "url": "https://tvoj-backend-na-renderu.com/api",
+    "url": "https://internet-tehnologije-2025-z86d.onrender.com/api",
     "description": "Produkcioni server (Render)"
   },
   {
